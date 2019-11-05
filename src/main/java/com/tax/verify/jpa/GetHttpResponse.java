@@ -61,7 +61,7 @@ public class GetHttpResponse {
 
                         vd = mapper.readValue(responseString, new TypeReference<VD>() {
                         });
-                        if( vd.getData().getDurum_text().equals("FAAL") || vd.getData().getDurum_text().equals("TERK")){
+                        if( vd.getData().getDurum_text().equals("FAAL") || vd.getData().getDurum_text().equals("TERK") || vd.getData().getDurum_text().equals("* Gerçek Kişi Potansiyel Mükellef")){
                             newList.get(i).setPlaka(plate);
                             newList.get(i).setVd_vdkodu(vd_vdkodu);
                         }
@@ -140,7 +140,7 @@ public class GetHttpResponse {
                             responseString = jsonResponse.getBody().toString();
                             vd = mapper.readValue(responseString, new TypeReference<VD>() {
                             });
-                        if( vd.getData().getDurum_text().equals("FAAL") || vd.getData().getDurum_text().equals("TERK") ){
+                        if( vd.getData().getDurum_text().equals("FAAL") || vd.getData().getDurum_text().equals("TERK") || vd.getData().getDurum_text().equals("* Gerçek Kişi Potansiyel Mükellef")){
                             newList.get(i).setPlaka(plate);
                             newList.get(i).setVd_vdkodu(vd_vdkodu);
                         }

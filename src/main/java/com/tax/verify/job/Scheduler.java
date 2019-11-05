@@ -39,10 +39,9 @@ public class Scheduler {
     @Async
     @Scheduled(cron = "0 0 0 * * ?")
     public void dailyScheduler() {
-        System.out.println("cron runs");
+        //System.out.println("cron runs");
         try{
             queueService.addRepoVdSql();
-            Thread.sleep(20000);
             queueService.addRepoTcSql();
 
         }catch (Exception e){

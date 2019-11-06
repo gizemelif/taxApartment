@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
 
-
 @Service
 public class SchedulerConfig implements SchedulingConfigurer {
     private static Logger LOGGER = LoggerFactory.getLogger(SchedulerConfig.class);

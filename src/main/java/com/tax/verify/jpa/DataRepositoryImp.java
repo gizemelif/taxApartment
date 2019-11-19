@@ -13,6 +13,8 @@ import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.*;
 
+//TODO: PLAKASI BOŞ OLAN KAYITLAR İÇİN AYRI BİR UPDATE SORGUSU ÇALIŞTIRAN VE REQUEST METODUNU ÇAĞIRAN FONKSİYON YAZILACAK.
+
 @Transactional
 @Service
 public class DataRepositoryImp {

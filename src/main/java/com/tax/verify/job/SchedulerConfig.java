@@ -23,7 +23,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
     private static Logger LOGGER = LoggerFactory.getLogger(SchedulerConfig.class);
     private static ScheduledTaskRegistrar registrar;
 
-    ScheduledFuture dailyScheduler;
+    ScheduledFuture scheduledFuture;
     ScheduledFuture queueSchedule;
     Map<ScheduledFuture, Boolean> futureMap = new HashMap<>();
 
@@ -53,9 +53,9 @@ public class SchedulerConfig implements SchedulingConfigurer {
         if (taskRegistrar.getScheduler() == null) {
             taskRegistrar.setScheduler(poolScheduler2());
         }
-        if (dailyScheduler == null || (dailyScheduler.isCancelled() && futureMap.get(dailyScheduler) == true)) {
+        if (scheduledFuture == null || (scheduledFuture.isCancelled() && futureMap.get(scheduledFuture) == true)) {
             CronTrigger croneTrigger = new CronTrigger("0 0 10 * * ?", TimeZone.getDefault());
-            dailyScheduler = taskRegistrar.getScheduler().schedule(() -> scheduleCron("0 0 0 * * ?"), croneTrigger);
+            scheduledFuture = taskRegistrar.getScheduler().schedule(() -> scheduleCron("0 0 0 * * ?"), croneTrigger);
         }
         if (queueSchedule == null || (queueSchedule.isCancelled() && futureMap.get(queueSchedule) == true)) {
             CronTrigger croneTrigger = new CronTrigger("20 * * * * ?", TimeZone.getDefault());
@@ -70,7 +70,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
         configureTasks(registrar);
     }
     public void activateAll() {
-        activateFuture(dailyScheduler);
+        activateFuture(scheduledFuture);
         activateFuture(queueSchedule);
     }
     // Only reason this method gets the cron as parameter is for debug purposes.

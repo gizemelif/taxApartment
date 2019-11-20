@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import static com.tax.verify.jpa.pojo.Queue.QueueState.PROCESSED;
 
 @Component
-@EnableAsync
 public class Scheduler {
     private Queue queue = new Queue();
     private static Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
@@ -36,7 +35,6 @@ public class Scheduler {
         return queueRepo.findByState();
     }
 
-    @Async
     @Scheduled(cron = "0 0 0 * * ?")
     public void dailyScheduler() {
         //System.out.println("cron runs");
@@ -50,7 +48,6 @@ public class Scheduler {
 
     }
 
-    @Async
     @Scheduled(fixedDelay = 20000)
     public void queueSchedule() {
         queue = findByState();

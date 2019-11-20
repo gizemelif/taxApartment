@@ -45,78 +45,78 @@ public class DataRepositoryImp {
         s.addEntity(Data.class);
         return s.list();
     }
-/*
--->Eğer plakanın boş olup olmadığını servis ile parametre olarak almak gerekirse update metotları;
-    public void updateTCNullPlate(String sql) {
-        try{
+    /*
+     public void updateTCNullPlate(String sql) {
+         try{
 
-            List<Data> newList = getSqlQuery(sql);
-            GetHttpResponse getHttpResponse = new GetHttpResponse();
+             List<Data> newList = getSqlQuery(sql);
+             GetHttpResponse getHttpResponse = new GetHttpResponse();
 
-            newList.parallelStream().forEach( d ->{
-                try {
-                    List<Data> list_for_parallel = new ArrayList<>();
-                    list_for_parallel.add(d);
-                    try{
-                        Data respData = new Data();
-                        for(int i=0; i < list_for_parallel.size(); i++){
-                            respData = getHttpResponse.getResponseNullPlate(list_for_parallel).get(i);
-                        }
+             newList.parallelStream().forEach( d ->{
+                 try {
+                     List<Data> list_for_parallel = new ArrayList<>();
+                     list_for_parallel.add(d);
+                     try{
+                         Data respData = new Data();
+                         for(int i=0; i < list_for_parallel.size(); i++){
+                             respData = getHttpResponse.getResponse(list_for_parallel).get(i);
+                         }
 
-                        ındexRepository.updateTCNonePlate(respData.getTckn(), respData.getUnvan(), respData.getVdkodu(),
-                                respData.getVkn(), respData.getDurum_text(), respData.getPlaka(), respData.getOid());
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+                         ındexRepository.update(respData.getTckn(), respData.getUnvan(), respData.getVdkodu(),
+                                 respData.getVkn(), respData.getDurum_text(), respData.getPlaka(), respData.getOid());
+                     }
+                     catch (Exception e)
+                     {
+                         e.printStackTrace();
+                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             });
 
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    public void updateVknNullPlate(String sql) {
-        try{
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+     }
 
-            List<Data> newList = getSqlQuery(sql);
-            GetHttpResponse getHttpResponse = new GetHttpResponse();
+     public void updateVknNullPlate(String sql) {
+         try{
 
-            newList.parallelStream().forEach( d ->{
-                try {
-                    List<Data> list_for_parallel = new ArrayList<>();
-                    list_for_parallel.add(d);
-                    try{
-                        Data respData = new Data();
-                        for(int i=0; i < list_for_parallel.size(); i++){
-                            respData = getHttpResponse.getResponseVknNullPlate(list_for_parallel).get(i);
+             List<Data> newList = getSqlQuery(sql);
+             GetHttpResponse getHttpResponse = new GetHttpResponse();
 
-                        }
-                        ındexRepository.updateVknNonePlate(respData.getVd_vkn(),respData.getVd_unvan_donen(),
-                                respData.getVd_vdkodu(), respData.getVd_tc_donen(),
-                                respData.getVd_fiili_durum_donen(), respData.getPlaka(),respData.getOid());
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+             newList.parallelStream().forEach( d ->{
+                 try {
+                     List<Data> list_for_parallel = new ArrayList<>();
+                     list_for_parallel.add(d);
+                     try{
+                         Data respData = new Data();
+                         for(int i=0; i < list_for_parallel.size(); i++){
+                             respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                         }
+                         ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
+                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(),
+                                 respData.getVd_fiili_durum_donen(), respData.getPlaka(),respData.getOid());
+                     }
+                     catch (Exception e)
+                     {
+                         e.printStackTrace();
+                     }
 
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-*/
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             });
+
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+     }
+ */
     public void updateVknTable(String sql) {
         try{
 
@@ -130,9 +130,12 @@ public class DataRepositoryImp {
                     try{
                         Data respData = new Data();
                         for(int i=0; i < list_for_parallel.size(); i++){
-                            respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
+                            if(d.getPlaka() == null || d.getPlaka().length()==0){
+                                respData = getHttpResponse.getResponseVknNullPlate(list_for_parallel).get(i);
+                            }else{
+                                respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
+                            }
                         }
-
                         ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(),
                                 respData.getVd_fiili_durum_donen(), respData.getPlaka(),respData.getOid());
@@ -166,7 +169,12 @@ public class DataRepositoryImp {
                     try{
                         Data respData = new Data();
                         for(int i=0; i < list_for_parallel.size(); i++){
-                            respData = getHttpResponse.getResponse(list_for_parallel).get(i);
+
+                            if( d.getPlaka() == null || d.getPlaka().length()==0){
+                                respData = getHttpResponse.getResponseNullPlate(list_for_parallel).get(i);
+                            }else{
+                                respData = getHttpResponse.getResponse(list_for_parallel).get(i);
+                            }
                         }
                         ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
                                 respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid());

@@ -34,7 +34,9 @@ public class QueueService {
     //Bir kereliğine tabloya eklendi ve her gece çalıştırılması için zamanlandı.
     public void addRepoVdSql(){
         Queue queue = new Queue();
-        String sql = "select * from vd_tc_index where vd_sorulan is not null and vd_fiili_durum_donen = 'FAAL' or vd_fiili_durum_donen = 'TERK' and lastupdated < now() - INTERVAL '1 month' limit 10000";
+        String sql = "select * from vd_tc_index vti where vd_sorulan is not null and length(vd_sorulan)>0 and  plaka is not null and" +
+                "vd_fiili_durum_donen='FAAL' and plaka in ('34','6','35','7','16','48') and" +
+                "lastupdated_vd<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
         String queryType = "vd";
         queue.setSql_string(sql);
         queue.setNotification_mail("Queued");
@@ -46,7 +48,9 @@ public class QueueService {
     public void addRepoTcSql(){
         Queue queue = new Queue();
 
-        String sql = "select * from vd_tc_index where tc_sorulan is not null and tc_fiili_durum_donen = 'FAAL' or tc_fiili_durum_donen = 'TERK' and lastupdated < now() - INTERVAL '1 month' limit 10000";
+        String sql = "select * from vd_tc_index vti where tc_sorulan is not null and length(tc_sorulan)>0 and  plaka is not null and" +
+                "tc_fiili_durum_donen='FAAL' and plaka in ('34','6','35','7','16','48') and" +
+                "lastupdated<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
         String queryType = "tc";
         queue.setSql_string(sql);
         queue.setNotification_mail("Queued");

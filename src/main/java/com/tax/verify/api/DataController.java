@@ -45,4 +45,5 @@ public class DataController {
 
         service.setQueueRepo(sql, queryType);
     }
+
 }

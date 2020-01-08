@@ -7,8 +7,6 @@ import com.tax.verify.jpa.pojo.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import static com.tax.verify.jpa.pojo.Queue.QueueState.PROCESSED;
@@ -35,7 +33,7 @@ public class Scheduler {
         return queueRepo.findByState();
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    /*@Scheduled(cron = "0 0 0 * * ?")
     public void dailyScheduler() {
         //System.out.println("cron runs");
         try{
@@ -46,7 +44,7 @@ public class Scheduler {
             LOGGER.info(e.getMessage());
         }
 
-    }
+    }*/
 
     @Scheduled(fixedDelay = 20000)
     public void queueSchedule() {
@@ -76,29 +74,3 @@ public class Scheduler {
         }
     }
 }
-/*
---> Eğer plate için servisle ayrı bir parametre alınması gerekirse;
-
-    if(queue != null && (queue.getQueryType().equals("tc") || queue.getQueryType().equals("TC") && queue.getIsPlate().equals("none"))) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateTCNonePlate(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-
-            } else if (queue != null && (queue.getQueryType().equals("tc") || queue.getQueryType().equals("TC") && queue.getIsPlate().length() != 0)) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateTable(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-
-            } else if (queue != null && (queue.getQueryType().equals("vd") || queue.getQueryType().equals("VD") && queue.getIsPlate().equals("none"))) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateVknNullPlate(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-            } else if (queue != null && (queue.getQueryType().equals("vd") || queue.getQueryType().equals("VD") && queue.getIsPlate().length() != 0)) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateVknTable(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-            }*/

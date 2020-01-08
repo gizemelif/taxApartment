@@ -82,6 +82,7 @@ public class GetHttpResponse {
                             myData.setVkn("N/A");
                             myData.setOid(newList.get(i).getOid());
                             myData.setPlaka("N/A");
+                            myData.setTc_tum_il_na((long) 1);
                             vd.setData(myData);
 
                             myDatas.add(myData);
@@ -157,6 +158,7 @@ public class GetHttpResponse {
                             myData.setVd_vdkodu("N/A");
                             myData.setOid(newList.get(i).getOid());
                             myData.setPlaka("N/A");
+                            myData.setVd_tum_il_na((long) 1);
 
                             vd.setData(myData);
 

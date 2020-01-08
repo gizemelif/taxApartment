@@ -1,5 +1,6 @@
 package com.tax.verify.dto;
 
+import jdk.nashorn.internal.codegen.types.NumericType;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -61,6 +62,11 @@ public class Data {
     private String plaka;
     @Column(name = "lastupdated")
     private Date lastupdated;
+    @Column(name = "vd_tum_il_na", columnDefinition = "NUMERIC(19,0)")
+    private Long vd_tum_il_na;
+    @Column(name = "tc_tum_il_na", columnDefinition = "NUMERIC(19,0)")
+    private Long tc_tum_il_na;
+
     @Transient
     private String durum;
     @Transient
@@ -297,4 +303,27 @@ public class Data {
         this.plaka = plaka;
     }
 
+    public Date getTarih() {
+        return tarih;
+    }
+
+    public void setTarih(Date tarih) {
+        this.tarih = tarih;
+    }
+
+    public Long getTc_tum_il_na() {
+        return tc_tum_il_na;
+    }
+
+    public void setTc_tum_il_na(Long tc_tum_il_na) {
+        this.tc_tum_il_na = tc_tum_il_na;
+    }
+
+    public Long getVd_tum_il_na() {
+        return vd_tum_il_na;
+    }
+
+    public void setVd_tum_il_na(Long vd_tum_il_na) {
+        this.vd_tum_il_na = vd_tum_il_na;
+    }
 }

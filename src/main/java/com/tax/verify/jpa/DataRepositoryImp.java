@@ -138,7 +138,7 @@ public class DataRepositoryImp {
                         }
                         ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(),
-                                respData.getVd_fiili_durum_donen(), respData.getPlaka(),respData.getOid());
+                                respData.getVd_fiili_durum_donen(), respData.getPlaka(),respData.getOid(), respData.getVd_tum_il_na());
                     }
                     catch (Exception e)
                     {
@@ -177,7 +177,7 @@ public class DataRepositoryImp {
                             }
                         }
                         ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
-                                respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid());
+                                respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),respData.getTc_tum_il_na());
 
                     }
                     catch (Exception e)

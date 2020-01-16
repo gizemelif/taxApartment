@@ -4,22 +4,12 @@ import com.tax.verify.job.Scheduler;
 import com.tax.verify.jpa.*;
 import com.tax.verify.jpa.pojo.Queue;
 import com.tax.verify.jpa.QueueService;
-import org.json.JSONObject;
+import com.tax.verify.jpa.pojo.Vd_Tc_Queried;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static com.tax.verify.jpa.pojo.Queue.QueueState.PROCESSED;
-import static com.tax.verify.jpa.pojo.Queue.QueueState.WAITING;
+import static com.tax.verify.jpa.pojo.Vd_Tc_Queried.state.WAITING;
 
 @RestController
 @RequestMapping("api")
@@ -28,6 +18,8 @@ public class DataController {
     private DataRepositoryImp dataRepositoryImp;
     @Autowired
     private IndexRepository dataRepository;
+    @Autowired
+    private RepeatedSqlRepo repo;
 
     @Autowired
     private Queue queue;
@@ -45,5 +37,15 @@ public class DataController {
 
         service.setQueueRepo(sql, queryType);
     }
+
+    @PostMapping("/addQuery")
+    public void addRepeatedQuery(@RequestParam String sqlString,
+                                 @RequestParam String queryType,
+                                 @RequestParam String notification){
+        Vd_Tc_Queried vdTcQueried = new Vd_Tc_Queried();
+        Enum status = WAITING;
+        repo.insertSql(sqlString,status,queryType,notification);
+    }
+
 
 }

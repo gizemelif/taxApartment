@@ -27,12 +27,11 @@ public class QueueService {
         queue.setState(WAITING);
         queue.setCreated_at( new Date());
         queue.setQueryType(queryType);
-        //queue.setIsPlate(isPlate);
         queueRepo.save(queue);
     }
     //Queue'ya üzerinden 1 aydan fazla zaman geçmiş vd ve tc lerin yeniden sorulması için gerekli olan sorgu da kaydedildi.
     //Bir kereliğine tabloya eklendi ve her gece çalıştırılması için zamanlandı.
-    public void addRepoVdSql(){
+    /*public void addRepoVdSql(){
         Queue queue = new Queue();
         String sql = "select * from vd_tc_index vti where vd_sorulan is not null and length(vd_sorulan)>0 and  plaka is not null and" +
                 "vd_fiili_durum_donen='FAAL' and plaka in ('34','6','35','7','16','48') and" +
@@ -58,5 +57,5 @@ public class QueueService {
         queue.setCreated_at( new Date());
         queue.setQueryType(queryType);
         queueRepo.save(queue);
-    }
+    }*/
 }

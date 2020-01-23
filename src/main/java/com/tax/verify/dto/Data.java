@@ -66,11 +66,71 @@ public class Data {
     private Long vd_tum_il_na;
     @Column(name = "tc_tum_il_na", columnDefinition = "NUMERIC(19,0)")
     private Long tc_tum_il_na;
+    @Column(name = "ise_baslama_tarihi")
+    private String ise_baslama_tarihi;
+    @Column(name = "adres")
+    private String adres;
+    @Column(name = "faaliyet_aciklama")
+    private String faaliyet_aciklama;
+    @Column(name = "matrah")
+    private String matrah;
+    @Column(name = "tahakkuk_eden")
+    private String tahakkuk_eden;
+    @Column(name = "yil")
+    private String yil;
 
     @Transient
     private String durum;
     @Transient
     private String sorgulayantckimlik;
+
+    public String getIse_baslama_tarihi() {
+        return ise_baslama_tarihi;
+    }
+
+    public void setIse_baslama_tarihi(String ise_baslama_tarihi) {
+        this.ise_baslama_tarihi = ise_baslama_tarihi;
+    }
+
+    public String getAdres() {
+        return adres;
+    }
+
+    public void setAdres(String adres) {
+        this.adres = adres;
+    }
+
+    public String getFaaliyet_aciklama() {
+        return faaliyet_aciklama;
+    }
+
+    public void setFaaliyet_aciklama(String faaliyet_aciklama) {
+        this.faaliyet_aciklama = faaliyet_aciklama;
+    }
+
+    public String getMatrah() {
+        return matrah;
+    }
+
+    public void setMatrah(String matrah) {
+        this.matrah = matrah;
+    }
+
+    public String getTahakkuk_eden() {
+        return tahakkuk_eden;
+    }
+
+    public void setTahakkuk_eden(String tahakkuk_eden) {
+        this.tahakkuk_eden = tahakkuk_eden;
+    }
+
+    public String getYil() {
+        return yil;
+    }
+
+    public void setYil(String yil) {
+        this.yil = yil;
+    }
 
     public String getSorgulayantckimlik() {
         return sorgulayantckimlik;
@@ -326,4 +386,5 @@ public class Data {
     public void setVd_tum_il_na(Long vd_tum_il_na) {
         this.vd_tum_il_na = vd_tum_il_na;
     }
+
 }

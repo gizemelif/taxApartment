@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tax.verify.dto.Data;
+import com.tax.verify.dto.TaxDetailResult;
 import com.tax.verify.dto.VD;
 import com.tax.verify.mailSender.EmailSender;
 import kong.unirest.HttpResponse;
@@ -49,7 +50,7 @@ public class GetHttpResponse {
                     for(int j = 1; j < 82; j++) {
                         plate = String.valueOf(j);
                             try {
-                                HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + plate )
+                                HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + plate + "&detail=1" )
                                         .header("accept", "application/json")
                                         .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
                                         .header("Connection", "keep-alive")
@@ -127,7 +128,7 @@ public class GetHttpResponse {
                         plate = String.valueOf(j);
 
                         try{
-                            HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + plate)
+                            HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + plate + "&detail=1")
                                     .header("accept", "application/json")
                                     .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
                                     .header("Connection", "keep-alive")
@@ -197,7 +198,7 @@ public class GetHttpResponse {
 
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + newList.get(i).getPlaka())
+                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
                             .header("accept", "application/json")
                             .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
                             .header("Connection", "keep-alive")
@@ -257,13 +258,14 @@ public class GetHttpResponse {
         List<Data> myDatas = new ArrayList<>();
         for (int i = 0; i < newList.size(); i++) {
             Data myData = new Data();
+            List<TaxDetailResult> detailData = new ArrayList<>();
             try {
                 String governmentNum = newList.get(i).getTckn();
                 governmentNum = governmentNum.replace(" ","");
 
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + newList.get(i).getPlaka())
+                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
                             .header("accept", "application/json")
                             .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
                             .header("Connection", "keep-alive")
@@ -286,6 +288,12 @@ public class GetHttpResponse {
                             myData.setVkn("N/A");
                             myData.setOid(newList.get(i).getOid());
                             myData.setPlaka("N/A");
+                            myData.setAdres("N/A");
+                            myData.setFaaliyet_aciklama("N/A");
+                            myData.setIse_baslama_tarihi("N/A");
+                            myData.setMatrah("N/A");
+                            myData.setTahakkuk_eden("N/A");
+                            myData.setYil("N/A");
 
                             vd.setData(myData);
 
@@ -298,6 +306,13 @@ public class GetHttpResponse {
                     vd.getData().setPlaka(newList.get(i).getPlaka());
                     vd.getData().setVkn(vd.getData().getVkn());
                     vd.getData().setDurum_text(vd.getData().getDurum_text());
+                    vd.getData().setAdres(vd.getTaxDetailResult().getAdres());
+                    vd.getData().setFaaliyet_aciklama(vd.getTaxDetailResult().getNacekoduaciklama());
+                    vd.getData().setIse_baslama_tarihi(vd.getTaxDetailResult().getIsebaslamatarihi());
+                    vd.getData().setMatrah(vd.getTaxDetailResult().getMatrah());
+                    vd.getData().setTahakkuk_eden(vd.getTaxDetailResult().getTahakkukeden());
+                    vd.getData().setYil(vd.getTaxDetailResult().getYil());
+
                     myData = vd.getData();
 
             } catch (Exception e) {

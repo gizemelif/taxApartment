@@ -131,16 +131,16 @@ public class DataRepositoryImp {
                         Data respData = new Data();
                         for(int i=0; i < list_for_parallel.size(); i++){
                             if(d.getPlaka() == null || d.getPlaka().length()==0){
-                                respData = getHttpResponse.getResponseVknNullPlate(list_for_parallel).get(i);
+                                //respData = getHttpResponse.getResponseVknNullPlate(list_for_parallel).get(i);
                             }else{
-                                respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
+                                //respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
                             }
                         }
                         ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(), respData.getVd_fiili_durum_donen(),
                                 respData.getPlaka(),respData.getOid(), respData.getVd_tum_il_na(), respData.getAdres(),
-                                respData.getFaaliyet_aciklama(), respData.getIse_baslama_tarihi(), respData.getMatrah(),
-                                respData.getTahakkuk_eden(), respData.getYil());
+                                respData.getNacekoduaciklama(), respData.getIsebaslamatarihi(), respData.getMatrah(),
+                                respData.getTahakkukeden(), respData.getYil());
                     }
                     catch (Exception e)
                     {
@@ -173,15 +173,15 @@ public class DataRepositoryImp {
                         for(int i=0; i < list_for_parallel.size(); i++){
 
                             if( d.getPlaka() == null || d.getPlaka().length()==0){
-                                respData = getHttpResponse.getResponseNullPlate(list_for_parallel).get(i);
+                                //respData = getHttpResponse.getResponseNullPlate(list_for_parallel).get(i);
                             }else{
                                 respData = getHttpResponse.getResponse(list_for_parallel).get(i);
                             }
                         }
                         ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
                                 respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
-                                respData.getTc_tum_il_na(), respData.getAdres(), respData.getFaaliyet_aciklama(),
-                                respData.getIse_baslama_tarihi(), respData.getMatrah(),respData.getTahakkuk_eden(),
+                                respData.getTc_tum_il_na(), respData.getAdres(), respData.getNacekoduaciklama(),
+                                respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
                                 respData.getYil());
                     }
                     catch (Exception e)

@@ -1,17 +1,33 @@
 package com.tax.verify.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-
 public class TaxDetailResult {
-    private String adres;
+    private Metadata metadata;
+    private Data data;
+
+    /*private String adres;
     private String nacekoduaciklama;
     private String isebaslamatarihi;
     private String matrah;
     private String tahakkukeden;
-    private String yil;
+    private String yil;*/
 
-    public String getAdres() {
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+   /* public String getAdres() {
         return adres;
     }
 
@@ -57,5 +73,5 @@ public class TaxDetailResult {
 
     public void setYil(String yil) {
         this.yil = yil;
-    }
+    }*/
 }

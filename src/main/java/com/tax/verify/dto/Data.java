@@ -1,7 +1,5 @@
 package com.tax.verify.dto;
 
-import jdk.nashorn.internal.codegen.types.NumericType;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -67,15 +65,15 @@ public class Data {
     @Column(name = "tc_tum_il_na", columnDefinition = "NUMERIC(19,0)")
     private Long tc_tum_il_na;
     @Column(name = "ise_baslama_tarihi")
-    private String ise_baslama_tarihi;
+    private String isebaslamatarihi;
     @Column(name = "adres")
     private String adres;
     @Column(name = "faaliyet_aciklama")
-    private String faaliyet_aciklama;
+    private String nacekoduaciklama;
     @Column(name = "matrah")
     private String matrah;
     @Column(name = "tahakkuk_eden")
-    private String tahakkuk_eden;
+    private String tahakkukeden;
     @Column(name = "yil")
     private String yil;
 
@@ -83,13 +81,24 @@ public class Data {
     private String durum;
     @Transient
     private String sorgulayantckimlik;
+    @Transient
+    private TaxDetailResult TaxDetailResult;
 
-    public String getIse_baslama_tarihi() {
-        return ise_baslama_tarihi;
+
+    public com.tax.verify.dto.TaxDetailResult getTaxDetailResult() {
+        return TaxDetailResult;
     }
 
-    public void setIse_baslama_tarihi(String ise_baslama_tarihi) {
-        this.ise_baslama_tarihi = ise_baslama_tarihi;
+    public void setTaxDetailResult(com.tax.verify.dto.TaxDetailResult taxDetailResult) {
+        TaxDetailResult = taxDetailResult;
+    }
+
+    public String getIsebaslamatarihi() {
+        return isebaslamatarihi;
+    }
+
+    public void setIsebaslamatarihi(String isebaslamatarihi) {
+        this.isebaslamatarihi = isebaslamatarihi;
     }
 
     public String getAdres() {
@@ -100,12 +109,12 @@ public class Data {
         this.adres = adres;
     }
 
-    public String getFaaliyet_aciklama() {
-        return faaliyet_aciklama;
+    public String getNacekoduaciklama() {
+        return nacekoduaciklama;
     }
 
-    public void setFaaliyet_aciklama(String faaliyet_aciklama) {
-        this.faaliyet_aciklama = faaliyet_aciklama;
+    public void setNacekoduaciklama(String nacekoduaciklama) {
+        this.nacekoduaciklama = nacekoduaciklama;
     }
 
     public String getMatrah() {
@@ -116,12 +125,12 @@ public class Data {
         this.matrah = matrah;
     }
 
-    public String getTahakkuk_eden() {
-        return tahakkuk_eden;
+    public String getTahakkukeden() {
+        return tahakkukeden;
     }
 
-    public void setTahakkuk_eden(String tahakkuk_eden) {
-        this.tahakkuk_eden = tahakkuk_eden;
+    public void setTahakkukeden(String tahakkukeden) {
+        this.tahakkukeden = tahakkukeden;
     }
 
     public String getYil() {

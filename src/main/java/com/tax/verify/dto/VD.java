@@ -1,17 +1,21 @@
 package com.tax.verify.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class VD {
     private Metadata metadata;
-    private Data data;
+    //private Data data;
     private List<Message> messages = null;
     private String error;
-
-    @JsonProperty
     private TaxDetailResult TaxDetailResult;
+
+    public TaxDetailResult getTaxDetailResult() {
+        return TaxDetailResult;
+    }
+
+    public void setTaxDetailResult(TaxDetailResult taxDetailResult) {
+        this.TaxDetailResult = taxDetailResult;
+    }
 
     public Metadata getMetadata() {
         return metadata;
@@ -19,22 +23,6 @@ public class VD {
 
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
-    }
-
-    public com.tax.verify.dto.TaxDetailResult getTaxDetailResult() {
-        return TaxDetailResult;
-    }
-
-    public void setTaxDetailResult(com.tax.verify.dto.TaxDetailResult taxDetailResult) {
-        TaxDetailResult = taxDetailResult;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
     }
 
     public List<Message> getMessages() {

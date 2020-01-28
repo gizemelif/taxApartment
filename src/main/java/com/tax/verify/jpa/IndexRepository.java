@@ -14,10 +14,10 @@ public interface IndexRepository extends JpaRepository<Data, String> {
     //Tckn ile yapılan sorgudan donen değerleri update eder.
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("UPDATE Data c SET c.tckn =:tckn, c.unvan=:unvan, c.vdkodu=:vdkodu, c.vkn=:vkn, c.durum_text=:durum_text, plaka=:plaka, lastupdated=current_timestamp, tc_tum_il_na =:tc_tum_il_na, adres=:adres, faaliyet_aciklama=:faaliyet_aciklama, ise_baslama_tarihi=:ise_baslama_tarihi, matrah=:matrah, tahakkuk_eden=:tahakkuk_eden, yil=:yil where c.oid=:oid")
+    @Query("UPDATE Data c SET c.tckn =:tckn, c.unvan=:unvan, c.vdkodu=:vdkodu, c.vkn=:vkn, c.durum_text=:durum_text, plaka=:plaka, lastupdated=current_timestamp, tc_tum_il_na =:tc_tum_il_na, tc_adres_donen=:tc_adres_donen, faaliyet_aciklama=:faaliyet_aciklama, ise_baslama_tarihi=:ise_baslama_tarihi, matrah=:matrah, tahakkuk_eden=:tahakkuk_eden, yil=:yil where c.oid=:oid")
     void update(@Param("tckn") String tckn,@Param("unvan") String unvan,@Param("vdkodu") String vdkodu, @Param("vkn") String vkn,
                 @Param("durum_text") String durum_text, @Param("plaka") String plaka, @Param("oid") String oid,
-                @Param("tc_tum_il_na") Long tc_tum_il_na, @Param("adres") String adres,
+                @Param("tc_tum_il_na") Long tc_tum_il_na, @Param("tc_adres_donen") String tc_adres_donen,
                 @Param("faaliyet_aciklama") String faaliyet_aciklama, @Param("ise_baslama_tarihi") String ise_baslama_tarihi,
                 @Param("matrah") String matrah, @Param("tahakkuk_eden") String tahakkuk_eden, @Param("yil") String yil);
 

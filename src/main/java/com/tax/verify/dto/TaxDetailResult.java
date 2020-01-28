@@ -1,8 +1,20 @@
 package com.tax.verify.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TaxDetailResult {
     private Metadata metadata;
     private Data data;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
 
     /*private String adres;
     private String nacekoduaciklama;

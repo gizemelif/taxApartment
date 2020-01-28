@@ -180,7 +180,7 @@ public class DataRepositoryImp {
                         }
                         ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
                                 respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
-                                respData.getTc_tum_il_na(), respData.getAdres(), respData.getNacekoduaciklama(),
+                                respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
                                 respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
                                 respData.getYil());
                     }

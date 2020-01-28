@@ -4,7 +4,7 @@ import java.util.List;
 
 public class VD {
     private Metadata metadata;
-    //private Data data;
+    private Data data;
     private List<Message> messages = null;
     private String error;
     private TaxDetailResult TaxDetailResult;
@@ -13,8 +13,16 @@ public class VD {
         return TaxDetailResult;
     }
 
-    public void setTaxDetailResult(TaxDetailResult taxDetailResult) {
-        this.TaxDetailResult = taxDetailResult;
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public void setTaxDetailResult(TaxDetailResult TaxDetailResult) {
+        this.TaxDetailResult = TaxDetailResult;
     }
 
     public Metadata getMetadata() {

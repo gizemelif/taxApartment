@@ -3,10 +3,7 @@ package com.tax.verify.jpa;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.tax.verify.dto.Data;
-import com.tax.verify.dto.TaxDetailResult;
 import com.tax.verify.dto.VD;
 import com.tax.verify.mailSender.EmailSender;
 import kong.unirest.HttpResponse;
@@ -17,8 +14,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import java.io.DataInput;
-import java.security.Key;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static com.tax.verify.mailSender.EmailSender.gmail_config;
@@ -29,7 +24,7 @@ public class GetHttpResponse {
 
     static {
         try {
-            mailer = new EmailSender(gmail_config, ImmutablePair.of("errorverifyvkn@gmail.com","gvgGroup!!*"));
+            mailer = new EmailSender(gmail_config, ImmutablePair.of("errorverifyvkn@gmail.com", "gvgGroup!!*"));
         } catch (AddressException e) {
             e.printStackTrace();
         }
@@ -39,167 +34,225 @@ public class GetHttpResponse {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         List<Data> myDatas = new ArrayList<>();
-        VD vd = new VD();
+        Integer satirlarSize = 0;
 
         for (int i = 0; i < newList.size(); i++) {
             Data myData = new Data();
 
-                String governmentNum = newList.get(i).getTckn();
-                governmentNum = governmentNum.replace(" ","");
-                String plate = "";
-                String responseString = "";
-                String vd_vdkodu = "";
+            String governmentNum = newList.get(i).getTckn();
+            governmentNum = governmentNum.replace(" ", "");
+            String plate = "";
+            String responseString = "";
 
-                AtomicReference<Boolean> isFound = new AtomicReference<>(false);
+            AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    for(int j = 1; j < 82; j++) {
-                        plate = String.valueOf(j);
-                            try {
-                                HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + plate + "&detail=1" )
-                                        .header("accept", "application/json")
-                                        .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-                                        .header("Connection", "keep-alive")
-                                        .socketTimeout(120000)
-                                        .asJson();
+            for (int j = 1; j < 82; j++) {
+                plate = String.valueOf(j);
+                try {
+                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + plate + "&detail=1")
+                            .header("accept", "application/json")
+                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
+                            .header("Connection", "keep-alive")
+                            .socketTimeout(120000)
+                            .asJson();
 
-                                responseString = jsonResponse.getBody().toString();
+                    responseString = jsonResponse.getBody().toString();
 
-                                vd = mapper.readValue(responseString, new TypeReference<VD>() {
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                    JSONObject data1 = new JSONObject(responseString);
+                    JSONObject data2 = (JSONObject) data1.get("data");
+                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    JSONObject resultData = (JSONObject) taxResult.get("data");
 
-                                mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
-
-                                System.out.println(e.toString());
-                            }
-                        if(vd.getData().getVdkodu().length() !=0){
-                            break;
-                        }
-                    }
-                    if( vd.getData().getTckn().length() == 0 || vd == null || vd.getData().getTckn() == null || vd.getData().getVdkodu() == null || vd.getData().getVdkodu().length() == 0 || vd.getData().getDurum_text() == null || vd.getData().getDurum_text().length() == 0 ) {
-
-                        if (!isFound.get()) {
-                            vd = new VD();
-                            myData.setDurum_text("N/A");
-                            myData.setTckn(governmentNum);
-                            myData.setUnvan("N/A");
-                            myData.setVdkodu("N/A");
-                            myData.setVkn("N/A");
-                            myData.setOid(newList.get(i).getOid());
-                            myData.setPlaka("N/A");
-                            myData.setTc_tum_il_na((long) 1);
-                            vd.setData(myData);
-
-                            myDatas.add(myData);
-
-                            continue;
-                        }
+                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("unvan").toString().length() != 0) {
+                        break;
                     }
 
-                isFound.set(true);
-                vd.getData().setOid(newList.get(i).getOid());
-                vd.getData().setVkn(vd.getData().getVkn());
-                vd.getData().setTckn(governmentNum);
-                vd.getData().setUnvan(vd.getData().getUnvan());
-                vd.getData().setVdkodu(vd.getData().getVdkodu());
-                vd.getData().setDurum_text(vd.getData().getDurum_text());
-                vd.getData().setPlaka(plate);
+                } catch (Exception e) {
+                    e.printStackTrace();
 
-                myData = vd.getData();
+                    mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
+
+                    System.out.println(e.toString());
+                }
+            }
+            JSONObject data1 = new JSONObject(responseString);
+            JSONObject data2 = (JSONObject) data1.get("data");
+            JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+            JSONObject resultData = (JSONObject) taxResult.get("data");
+            if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+                JSONArray satirlar = resultData.getJSONArray("satirlar");
+                for (Object o : satirlar) {
+                    JSONObject jsonLineItem = (JSONObject) o;
+                    myData.setMatrah(jsonLineItem.get("matrah").toString());
+                    myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                    myData.setYil(jsonLineItem.get("yil").toString());
+                    break;
+                }
+            }else{
+                myData.setMatrah("N/A");
+                myData.setTahakkukeden("N/A");
+                myData.setYil("N/A");
+            }
+            if (data2.toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0 || data2.get("durum_text") == null ) {
+
+                if (!isFound.get()) {
+                    myData.setDurum_text("N/A");
+                    myData.setTckn(governmentNum);
+                    myData.setUnvan("N/A");
+                    myData.setVdkodu("N/A");
+                    myData.setVkn("N/A");
+                    myData.setOid(newList.get(i).getOid());
+                    myData.setPlaka("N/A");
+                    myData.setTc_tum_il_na((long) 1);
+                    myData.setIsebaslamatarihi("N/A");
+                    myData.setNacekoduaciklama("N/A");
+                    myData.setTc_adres_donen("N/A");
 
 
+                    myDatas.add(myData);
+
+                    continue;
+                }
+            }
+
+            isFound.set(true);
+            myData.setOid(newList.get(i).getOid());
+            myData.setTckn(governmentNum);
+            myData.setPlaka(plate);
+            myData.setVdkodu(data2.get("vdkodu").toString());
+            myData.setUnvan(data2.get("unvan").toString());
+            myData.setVkn(data2.get("vkn").toString());
+            myData.setDurum_text((String) data2.get("durum_text"));
+            if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0){
+                myData.setTc_adres_donen("N/A");
+                myData.setIsebaslamatarihi("N/A");
+                myData.setNacekoduaciklama("N/A");
+            }else{
+                myData.setTc_adres_donen(resultData.get("adres").toString());
+                myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+                myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+            }
             myDatas.add(myData);
         }
         return myDatas;
     }
+
     public List<Data> getResponseVknNullPlate(List<Data> newList) throws MessagingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         List<Data> myDatas = new ArrayList<>();
-        VD vd = new VD();
+        Integer satirlarSize = 0;
 
-        for(int i = 0; i < newList.size(); i++){
+        for (int i = 0; i < newList.size(); i++) {
             Data myData = new Data();
 
-                String taxNumber = newList.get(i).getVd_vkn();
-                taxNumber = taxNumber.replace(" ","");
-                String plate = "";
-                String responseString = "";
+            String taxNumber = newList.get(i).getVd_vkn();
+            taxNumber = taxNumber.replace(" ", "");
+            String plate = "";
+            String responseString = "";
 
-                AtomicReference<Boolean> isFound = new AtomicReference<>(false);
+            AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    for(int j = 1; j < 82; j++) {
-                        plate = String.valueOf(j);
+            for (int j = 1; j < 82; j++) {
+                plate = String.valueOf(j);
 
-                        try{
-                            HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + plate + "&detail=1")
-                                    .header("accept", "application/json")
-                                    .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-                                    .header("Connection", "keep-alive")
-                                    .socketTimeout(120000)
-                                    .asJson();
+                try {
+                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + plate + "&detail=1")
+                            .header("accept", "application/json")
+                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
+                            .header("Connection", "keep-alive")
+                            .socketTimeout(120000)
+                            .asJson();
 
-                            responseString = jsonResponse.getBody().toString();
-                            vd = mapper.readValue(responseString, new TypeReference<VD>() {
-                            });
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            System.out.println(e.toString());
-                            mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
-                        }
+                    responseString = jsonResponse.getBody().toString();
 
-                        if(vd.getData().getVdkodu().length() !=0){
-                            break;
-                        }
+                    JSONObject data1 = new JSONObject(responseString);
+                    JSONObject data2 = (JSONObject) data1.get("data");
+                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    JSONObject resultData = (JSONObject) taxResult.get("data");
+
+                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("vdkodu").toString() != null) {
+                        break;
                     }
-                    if( vd.getData().getVkn().length() == 0 || vd == null || vd.getData().getVkn() == null || vd.getData().getVdkodu() == null || vd.getData().getVdkodu().length() == 0 || vd.getData().getDurum_text() == null || vd.getData().getDurum_text().length() == 0 ){
 
-                        if(!isFound.get()){
-                            vd = new VD();
-                            myData.setVd_vkn(taxNumber);
-                            myData.setVd_unvan_donen("N/A");
-                            myData.setVd_tc_donen("N/A");
-                            myData.setVd_fiili_durum_donen("N/A");
-                            myData.setVd_vdkodu("N/A");
-                            myData.setOid(newList.get(i).getOid());
-                            myData.setPlaka("N/A");
-                            myData.setVd_tum_il_na((long) 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(e.toString());
+                    mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
+                }
+            }
+            JSONObject data1 = new JSONObject(responseString);
+            JSONObject data2 = (JSONObject) data1.get("data");
+            JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+            JSONObject resultData = (JSONObject) taxResult.get("data");
+            if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+                JSONArray satirlar = resultData.getJSONArray("satirlar");
+                for (Object o : satirlar) {
+                    JSONObject jsonLineItem = (JSONObject) o;
+                    myData.setMatrah(jsonLineItem.get("matrah").toString());
+                    myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                    myData.setYil(jsonLineItem.get("yil").toString());
+                    break;
+                }
+            }else{
+                myData.setMatrah("N/A");
+                myData.setTahakkukeden("N/A");
+                myData.setYil("N/A");
+            }
 
-                            vd.setData(myData);
+            if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
 
-                            myDatas.add(myData);
-                            continue;
-                        }
-                    }
-                isFound.set(true);
+                if (!isFound.get()) {
+                    myData.setVd_vkn(taxNumber);
+                    myData.setVd_unvan_donen("N/A");
+                    myData.setVd_tc_donen("N/A");
+                    myData.setVd_fiili_durum_donen("N/A");
+                    myData.setVd_vdkodu("N/A");
+                    myData.setOid(newList.get(i).getOid());
+                    myData.setPlaka("N/A");
+                    myData.setVd_tum_il_na((long) 1);
+                    myData.setIsebaslamatarihi("N/A");
+                    myData.setNacekoduaciklama("N/A");
+                    myData.setVd_adres_donen("N/A");
 
-                vd.getData().setOid(newList.get(i).getOid());
-                vd.getData().setVd_tc_donen(vd.getData().getTckn());
-                vd.getData().setVd_vkn(newList.get(i).getVd_vkn().trim());
-                vd.getData().setVd_fiili_durum_donen(vd.getData().getDurum_text());
-                vd.getData().setVd_unvan_donen(vd.getData().getUnvan());
-                vd.getData().setVd_vdkodu(vd.getData().getVdkodu());
-                vd.getData().setPlaka(plate);
+                    myDatas.add(myData);
+                    continue;
+                }
+            }
+            isFound.set(true);
+            myData.setOid(newList.get(i).getOid());
+            myData.setVd_tc_donen(data2.get("tckn").toString());
+            myData.setVd_vkn(newList.get(i).getVd_vkn().trim());
+            myData.setVd_fiili_durum_donen(data2.get("durum_text").toString());
+            myData.setVd_unvan_donen(data2.get("unvan").toString());
+            myData.setVd_vdkodu(data2.get("vdkodu").toString());
+            myData.setPlaka(plate);
 
-                myData = vd.getData();
-
+            if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0 ){
+                myData.setVd_adres_donen("N/A");
+                myData.setIsebaslamatarihi("N/A");
+                myData.setNacekoduaciklama("N/A");
+            }else{
+                myData.setVd_adres_donen(resultData.get("adres").toString());
+                myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+                myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+            }
             myDatas.add(myData);
         }
         return myDatas;
     }
 
-    public List<Data> getResponseVkn(List<Data> newList) throws MessagingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        List<Data> myDatas = new ArrayList<>();
-        for (int i = 0; i < newList.size(); i++) {
-            Data myData = new Data();
+        public List<Data> getResponseVkn (List <Data> newList) throws MessagingException {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            List<Data> myDatas = new ArrayList<>();
+            Integer satirlarSize = 0;
+            for (int i = 0; i < newList.size(); i++) {
+                Data myData = new Data();
+                try {
 
-            try {
-
-                String taxNumber = newList.get(i).getVd_vkn();
-                taxNumber = taxNumber.replace(" ","");
+                    String taxNumber = newList.get(i).getVd_vkn();
+                    taxNumber = taxNumber.replace(" ", "");
 
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
@@ -212,7 +265,174 @@ public class GetHttpResponse {
 
                     String responseString = jsonResponse.getBody().toString();
 
-                    VD vd = mapper.readValue(responseString, new TypeReference<VD>() {
+                    JSONObject data1 = new JSONObject(responseString);
+                    JSONObject data2 = (JSONObject) data1.get("data");
+                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    JSONObject resultData = (JSONObject) taxResult.get("data");
+                    if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+                        JSONArray satirlar = resultData.getJSONArray("satirlar");
+                        for (Object o : satirlar) {
+                            JSONObject jsonLineItem = (JSONObject) o;
+                            myData.setMatrah(jsonLineItem.get("matrah").toString());
+                            myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                            myData.setYil(jsonLineItem.get("yil").toString());
+                            break;
+                        }
+                    }else{
+                        myData.setMatrah("N/A");
+                        myData.setTahakkukeden("N/A");
+                        myData.setYil("N/A");
+                    }
+
+                    if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
+                        if (!isFound.get()) {
+                            myData.setVd_fiili_durum_donen("N/A");
+                            myData.setVd_vkn(taxNumber);
+                            myData.setVd_unvan_donen("N/A");
+                            myData.setVd_vdkodu("N/A");
+                            myData.setVd_tc_donen("N/A");
+                            myData.setOid(newList.get(i).getOid());
+                            myData.setPlaka("N/A");
+                            myData.setIsebaslamatarihi("N/A");
+                            myData.setNacekoduaciklama("N/A");
+                            myData.setVd_adres_donen("N/A");
+
+                            myDatas.add(myData);
+                            continue;
+                        }
+
+                    }
+
+                    isFound.set(true);
+
+                    myData.setOid(newList.get(i).getOid());
+                    myData.setVd_vkn(taxNumber);
+                    myData.setPlaka(newList.get(i).getPlaka());
+                    myData.setVd_vdkodu(data2.get("vdkodu").toString());
+                    myData.setVd_unvan_donen(data2.get("unvan").toString());
+                    myData.setVd_tc_donen(data2.get("tckn").toString());
+                    myData.setVd_fiili_durum_donen((String) data2.get("durum_text"));
+                    if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0 ){
+                        myData.setVd_adres_donen("N/A");
+                        myData.setIsebaslamatarihi("N/A");
+                        myData.setNacekoduaciklama("N/A");
+                    }else{
+                        myData.setVd_adres_donen(resultData.get("adres").toString());
+                        myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+                        myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+                    }
+
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                    System.out.println(e.toString());
+                    mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
+                }
+                myDatas.add(myData);
+            }
+            return myDatas;
+        }
+
+        public List<Data> getResponse (List < Data > newList) throws MessagingException {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            List<Data> myDatas = new ArrayList<>();
+            Integer satirlarSize = 0;
+
+            for (int i = 0; i < newList.size(); i++) {
+                Data myData = new Data();
+
+
+                try {
+                    String governmentNum = newList.get(i).getTckn();
+                    governmentNum = governmentNum.replace(" ", "");
+
+                    AtomicReference<Boolean> isFound = new AtomicReference<>(false);
+
+                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
+                            .header("accept", "application/json")
+                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
+                            .header("Connection", "keep-alive")
+                            .socketTimeout(120000)
+                            .asJson();
+
+                    String responseString = jsonResponse.getBody().toString();
+
+                    JSONObject data1 = new JSONObject(responseString);
+                    JSONObject data2 = (JSONObject) data1.get("data");
+                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    JSONObject resultData = (JSONObject) taxResult.get("data");
+                    if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+                        JSONArray satirlar = resultData.getJSONArray("satirlar");
+                        for (Object o : satirlar) {
+                            JSONObject jsonLineItem = (JSONObject) o;
+                            myData.setMatrah(jsonLineItem.get("matrah").toString());
+                            myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                            myData.setYil(jsonLineItem.get("yil").toString());
+                            break;
+                        }
+                    }else{
+                        myData.setMatrah("N/A");
+                        myData.setTahakkukeden("N/A");
+                        myData.setYil("N/A");
+                    }
+
+                    if (data2.toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
+                        if (!isFound.get()) {
+                            myData.setDurum_text("N/A");
+                            myData.setTckn(governmentNum);
+                            myData.setUnvan("N/A");
+                            myData.setVdkodu("N/A");
+                            myData.setVkn("N/A");
+                            myData.setOid(newList.get(i).getOid());
+                            myData.setPlaka("N/A");
+                            myData.setIsebaslamatarihi("N/A");
+                            myData.setNacekoduaciklama("N/A");
+                            myData.setTc_adres_donen("N/A");
+
+                            myDatas.add(myData);
+                            continue;
+                        }
+
+                    }
+
+                    isFound.set(true);
+
+                    myData.setOid(newList.get(i).getOid());
+                    myData.setTckn(governmentNum);
+                    myData.setPlaka(newList.get(i).getPlaka());
+                    myData.setVdkodu(data2.get("vdkodu").toString());
+                    myData.setUnvan(data2.get("unvan").toString());
+                    myData.setVkn(data2.get("vkn").toString());
+                    myData.setDurum_text((String) data2.get("durum_text"));
+
+                    if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0 ){
+                        myData.setTc_adres_donen("N/A");
+                        myData.setIsebaslamatarihi("N/A");
+                        myData.setNacekoduaciklama("N/A");
+                    }else{
+                        myData.setTc_adres_donen(resultData.get("adres").toString());
+                        myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+                        myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+                    }
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                    mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
+
+                    System.out.println(e.toString());
+
+                }
+
+                myDatas.add(myData);
+            }
+            return myDatas;
+        }
+
+                    /*VD vd = mapper.readValue(responseString, new TypeReference<VD>() {
                     });
 
                     if( vd.getData().getVkn().length() == 0 || vd == null || vd.getData().getVkn() == null || vd.getData().getVdkodu() == null || vd.getData().getVdkodu().length() == 0 || vd.getData().getDurum_text() == null || vd.getData().getDurum_text().length() == 0 ){
@@ -242,133 +462,6 @@ public class GetHttpResponse {
                     vd.getData().setVd_unvan_donen(vd.getData().getUnvan());
                     vd.getData().setVd_vdkodu(vd.getData().getVdkodu());
 
-                    myData = vd.getData();
+                    myData = vd.getData();*/
 
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-                System.out.println(e.toString());
-                mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
-            }
-            myDatas.add(myData);
-        }
-        return myDatas;
-    }
-
-
-    public List<Data> getResponse(List<Data> newList) throws MessagingException {
-        //ObjectMapper mapper = new ObjectMapper();
-        //mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        List<Data> myDatas = new ArrayList<>();
-        for (int i = 0; i < newList.size(); i++) {
-            Data myData = new Data();
-            TaxDetailResult taxDetailResult = new TaxDetailResult();
-            Integer satirlarSize = 0;
-
-            try {
-                String governmentNum = newList.get(i).getTckn();
-                governmentNum = governmentNum.replace(" ","");
-
-                    AtomicReference<Boolean> isFound = new AtomicReference<>(false);
-
-                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
-                            .header("accept", "application/json")
-                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-                            .header("Connection", "keep-alive")
-                            .socketTimeout(120000)
-                            .asJson();
-
-                    String responseString = jsonResponse.getBody().toString();
-
-                    //VD vd = mapper.readValue(responseString, new TypeReference<VD>() {
-                    //});
-                JSONObject data1 = new JSONObject(responseString);
-                JSONObject data2 = (JSONObject) data1.get("data");
-                JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
-                JSONObject resultData = (JSONObject) taxResult.get("data");
-                if(!resultData.get("satirlarSize").equals(satirlarSize)){
-                    JSONArray satirlar = resultData.getJSONArray("satirlar");
-                    for(Object o : satirlar){
-                        JSONObject jsonLineItem = (JSONObject) o;
-                        myData.setMatrah(jsonLineItem.get("matrah").toString());
-                        myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
-                        myData.setYil(jsonLineItem.get("yil").toString());
-                        break;
-                    }
-                }
-
-                if(data2.toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0){
-                    if(!isFound.get()){
-                        VD vd = new VD();
-                        myData.setDurum_text("N/A");
-                        myData.setTckn(governmentNum);
-                        myData.setUnvan("N/A");
-                        myData.setVdkodu("N/A");
-                        myData.setVkn("N/A");
-                        myData.setOid(newList.get(i).getOid());
-                        myData.setPlaka("N/A");
-                        myData.setMatrah("N/A");
-                        myData.setIsebaslamatarihi("N/A");
-                        myData.setNacekoduaciklama("N/A");
-                        myData.setTahakkukeden("N/A");
-
-                        vd.setData(myData);
-
-                        myDatas.add(myData);
-                        continue;
-                    }
-
-                }
-                    /*if( vd.getData().getTckn().length() == 0 || vd == null || vd.getData().getTckn() == null || vd.getData().getVdkodu() == null || vd.getData().getVdkodu().length() == 0){
-
-                        if(!isFound.get()){
-                            vd = new VD();
-                            myData.setDurum_text("N/A");
-                            myData.setTckn(governmentNum);
-                            myData.setUnvan("N/A");
-                            myData.setVdkodu("N/A");
-                            myData.setVkn("N/A");
-                            myData.setOid(newList.get(i).getOid());
-                            myData.setPlaka("N/A");
-
-                            vd.setData(myData);
-
-                            myDatas.add(myData);
-                            continue;
-                        }
-                    }
-                    vd.getData().setOid(newList.get(i).getOid());
-                    vd.getData().setPlaka(newList.get(i).getPlaka());
-                    vd.getData().setVkn(vd.getData().getVkn());
-                    vd.getData().setDurum_text(vd.getData().getDurum_text());
-                    */
-                    isFound.set(true);
-
-                    myData.setOid(newList.get(i).getOid());
-                    myData.setTckn(governmentNum);
-                    myData.setPlaka(newList.get(i).getPlaka());
-                    myData.setVdkodu(resultData.get("vdkodu").toString());
-                    myData.setUnvan(resultData.get("adsoyad").toString());
-                    myData.setVkn(data2.get("vkn").toString());
-                    myData.setDurum_text((String) data2.get("durum_text"));
-                    myData.setTc_adres_donen(resultData.get("adres").toString());
-                    myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
-                    myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
-                    //satirlarSize = resultData.get("satirlarSize").toString();
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-                mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
-
-                System.out.println(e.toString());
-
-            }
-
-            myDatas.add(myData);
-        }
-        return myDatas;
-    }
 }

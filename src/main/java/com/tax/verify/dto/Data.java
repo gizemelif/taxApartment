@@ -1,8 +1,6 @@
 package com.tax.verify.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -67,8 +65,6 @@ public class Data {
     private Long tc_tum_il_na;
     @Column(name = "ise_baslama_tarihi")
     private String isebaslamatarihi;
-    @Column(name = "adres")
-    private String adres;
     @Column(name = "faaliyet_aciklama")
     private String nacekoduaciklama;
     @Column(name = "matrah")
@@ -82,17 +78,6 @@ public class Data {
     private String durum;
     @Transient
     private String sorgulayantckimlik;
-    @Transient
-    private TaxDetailResult TaxDetailResult;
-
-
-    public com.tax.verify.dto.TaxDetailResult getTaxDetailResult() {
-        return TaxDetailResult;
-    }
-
-    public void setTaxDetailResult(com.tax.verify.dto.TaxDetailResult taxDetailResult) {
-        TaxDetailResult = taxDetailResult;
-    }
 
     public String getIsebaslamatarihi() {
         return isebaslamatarihi;
@@ -100,14 +85,6 @@ public class Data {
 
     public void setIsebaslamatarihi(String isebaslamatarihi) {
         this.isebaslamatarihi = isebaslamatarihi;
-    }
-
-    public String getAdres() {
-        return adres;
-    }
-
-    public void setAdres(String adres) {
-        this.adres = adres;
     }
 
     public String getNacekoduaciklama() {
@@ -371,14 +348,6 @@ public class Data {
 
     public void setPlaka(String plaka) {
         this.plaka = plaka;
-    }
-
-    public Date getTarih() {
-        return tarih;
-    }
-
-    public void setTarih(Date tarih) {
-        this.tarih = tarih;
     }
 
     public Long getTc_tum_il_na() {

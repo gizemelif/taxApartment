@@ -7,11 +7,6 @@ public class VD {
     private Data data;
     private List<Message> messages = null;
     private String error;
-    private TaxDetailResult TaxDetailResult;
-
-    public TaxDetailResult getTaxDetailResult() {
-        return TaxDetailResult;
-    }
 
     public Data getData() {
         return data;
@@ -19,10 +14,6 @@ public class VD {
 
     public void setData(Data data) {
         this.data = data;
-    }
-
-    public void setTaxDetailResult(TaxDetailResult TaxDetailResult) {
-        this.TaxDetailResult = TaxDetailResult;
     }
 
     public Metadata getMetadata() {

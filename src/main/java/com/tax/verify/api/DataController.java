@@ -38,13 +38,11 @@ public class DataController {
         service.setQueueRepo(sql, queryType);
     }
 
-    @PostMapping("/addQuery")
+    @GetMapping("/addQuery")
     public void addRepeatedQuery(@RequestParam String sqlString,
                                  @RequestParam String queryType,
                                  @RequestParam String notification){
-        Vd_Tc_Queried vdTcQueried = new Vd_Tc_Queried();
-        Enum status = WAITING;
-        repo.insertSql(sqlString,status,queryType,notification);
+        service.addRepoQueriedSql(sqlString,queryType,notification);
     }
 
 

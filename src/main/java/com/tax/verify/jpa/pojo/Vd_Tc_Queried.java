@@ -46,7 +46,7 @@ public class Vd_Tc_Queried {
 
     @Column(name = "CREATED_AT")
     @Generated(GenerationTime.INSERT)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "START_DATE")
     private Date start_date;
@@ -65,11 +65,11 @@ public class Vd_Tc_Queried {
     @Enumerated(EnumType.STRING)
     private Vd_Tc_Queried.state state;
 
-    public Timestamp getCreated_at() {
+    public Date getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Timestamp created_at) {
+    public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
 

@@ -4,12 +4,8 @@ import com.tax.verify.job.Scheduler;
 import com.tax.verify.jpa.*;
 import com.tax.verify.jpa.pojo.Queue;
 import com.tax.verify.jpa.QueueService;
-import com.tax.verify.jpa.pojo.Vd_Tc_Queried;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import static com.tax.verify.jpa.pojo.Vd_Tc_Queried.state.WAITING;
 
 @RestController
 @RequestMapping("api")
@@ -38,11 +34,10 @@ public class DataController {
         service.setQueueRepo(sql, queryType);
     }
 
-    @GetMapping("/addQuery")
+    @RequestMapping(method = RequestMethod.POST,path = "/addQuery")
     public void addRepeatedQuery(@RequestParam String sqlString,
-                                 @RequestParam String queryType,
-                                 @RequestParam String notification){
-        service.addRepoQueriedSql(sqlString,queryType,notification);
+                                 @RequestParam String queryType){
+        service.addRepoQueriedSql(sqlString,queryType);
     }
 
 

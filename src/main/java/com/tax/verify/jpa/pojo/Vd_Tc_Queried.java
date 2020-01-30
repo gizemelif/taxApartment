@@ -1,13 +1,11 @@
 package com.tax.verify.jpa.pojo;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Component
@@ -17,53 +15,44 @@ import java.util.Date;
 public class Vd_Tc_Queried {
     public Vd_Tc_Queried(){}
 
-    public Vd_Tc_Queried(String queryType, String job_oid, Date start_date, Date end_date, String notification_mail, String sql_string, Vd_Tc_Queried.state state) {
-        this.queryType = queryType;
+    public Vd_Tc_Queried(String query_type, String job_oid, Date created_at, String notification_mail, String sql_string) {
+        this.query_type = query_type;
         this.job_oid = job_oid;
-        this.start_date = start_date;
-        this.end_date = end_date;
+        this.created_at = created_at;
         this.notification_mail = notification_mail;
         this.sql_string = sql_string;
-        this.state = state;
     }
-
-    public Vd_Tc_Queried(String sql_string) {
-        this.sql_string = sql_string;
-    }
-
-    public enum state {
+    public enum QueriedState {
         WAITING, PROCESSING, PROCESSED
     }
     @Column(name = "QUERY_TYPE")
-    private String queryType;
+    private String query_type;
 
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")
-    @Generated(GenerationTime.INSERT)
     @Column(name = "JOB_OID")
     private String job_oid;
 
     @Column(name = "CREATED_AT")
-    @Generated(GenerationTime.INSERT)
+    @CreatedDate
     private Date created_at;
-
-    @Column(name = "START_DATE")
-    private Date start_date;
 
     @Column(name = "END_DATE")
     private Date end_date;
 
     @Column(name = "NOTIFICATION_MAIL")
-
     private String notification_mail;
 
     @Column(name = "SQL_STRING")
     private String sql_string;
 
-    @Column(name = "STATE")
+    @Column(name = "START_DATE")
+    private Date start_date;
+
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
-    private Vd_Tc_Queried.state state;
+    private QueriedState state;
 
     public Date getCreated_at() {
         return created_at;
@@ -73,11 +62,11 @@ public class Vd_Tc_Queried {
         this.created_at = created_at;
     }
 
-    public Vd_Tc_Queried.state getState() {
-        return state;
+    public QueriedState getState() {
+        return this.state;
     }
 
-    public void setState(Vd_Tc_Queried.state state) {
+    public void setState(QueriedState state) {
         this.state = state;
     }
 
@@ -105,11 +94,11 @@ public class Vd_Tc_Queried {
         this.job_oid = job_oid;
     }
 
-    public String getQueryType() {
-        return queryType;
+    public String getQuery_type() {
+        return query_type;
     }
-    public void setQueryType(String queryType) {
-        this.queryType = queryType;
+    public void setQuery_type(String query_type) {
+        this.query_type = query_type;
     }
 
     public Date getStart_date() {

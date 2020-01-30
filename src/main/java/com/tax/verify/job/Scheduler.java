@@ -35,18 +35,7 @@ public class Scheduler {
         return queueRepo.findByState();
     }
 
-    /*@Scheduled(cron = "0 0 0 * * ?")
-    public void dailyScheduler() {
-        //System.out.println("cron runs");
-        try{
-
-        }catch (Exception e){
-            LOGGER.info(e.getMessage());
-        }
-
-    }*/
-
-    @Scheduled(fixedDelay = 20000)
+   // @Scheduled(fixedDelay = 20000)
     public void queueSchedule() {
         queue = findByState();
         if (queue == null) {
@@ -69,34 +58,6 @@ public class Scheduler {
 
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
-         //   e.printStackTrace();
-            System.out.println("Queue is null");
         }
     }
 }
-/*
---> Eğer plate için servisle ayrı bir parametre alınması gerekirse;
-
-    if(queue != null && (queue.getQueryType().equals("tc") || queue.getQueryType().equals("TC") && queue.getIsPlate().equals("none"))) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateTCNonePlate(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-
-            } else if (queue != null && (queue.getQueryType().equals("tc") || queue.getQueryType().equals("TC") && queue.getIsPlate().length() != 0)) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateTable(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-
-            } else if (queue != null && (queue.getQueryType().equals("vd") || queue.getQueryType().equals("VD") && queue.getIsPlate().equals("none"))) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateVknNullPlate(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-            } else if (queue != null && (queue.getQueryType().equals("vd") || queue.getQueryType().equals("VD") && queue.getIsPlate().length() != 0)) {
-                queueRepo.updateState(Queue.QueueState.PROCESSING,"Process is starting...", queue.getJob_oid());
-                dataRepositoryImp.updateVknTable(queue.getSql_string());
-
-                queueRepo.updateStateProcessed(PROCESSED,"Process is completed", queue.getEnd_date(),queue.getJob_oid());
-            }*/

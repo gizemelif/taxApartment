@@ -1,6 +1,7 @@
 package com.tax.verify.jpa;
 
 import com.tax.verify.dto.Data;
+import com.tax.verify.job.RepeatedQueries;
 import com.tax.verify.job.Scheduler;
 import com.tax.verify.jpa.pojo.Queue;
 import org.hibernate.SQLQuery;
@@ -35,6 +36,9 @@ public class DataRepositoryImp {
 
     @Autowired
     Scheduler scheduler;
+
+    @Autowired
+    RepeatedQueries queries;
 
     @Autowired
     Queue queue;

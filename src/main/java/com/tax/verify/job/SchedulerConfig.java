@@ -2,7 +2,9 @@ package com.tax.verify.job;
 
 import com.tax.verify.jpa.DataRepositoryImp;
 import com.tax.verify.jpa.QueueRepo;
+import com.tax.verify.jpa.RepeatedSqlRepo;
 import com.tax.verify.jpa.pojo.Queue;
+import com.tax.verify.jpa.pojo.Vd_Tc_Queried;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
-
 
 @Service
 public class SchedulerConfig implements SchedulingConfigurer {
@@ -35,7 +36,13 @@ public class SchedulerConfig implements SchedulingConfigurer {
     Queue queue;
 
     @Autowired
+    Vd_Tc_Queried vd_tc_queried;
+
+    @Autowired
     QueueRepo queueRepo;
+
+    @Autowired
+    RepeatedSqlRepo repeatedSqlRepo;
 
     @Bean
     public TaskScheduler poolScheduler2(){

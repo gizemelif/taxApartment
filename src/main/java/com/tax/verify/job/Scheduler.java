@@ -33,19 +33,6 @@ public class Scheduler {
         return queueRepo.findByState();
     }
 
-    /*@Scheduled(cron = "0 0 0 * * ?")
-    public void dailyScheduler() {
-        //System.out.println("cron runs");
-        try{
-            queueService.addRepoVdSql();
-            queueService.addRepoTcSql();
-
-        }catch (Exception e){
-            LOGGER.info(e.getMessage());
-        }
-
-    }*/
-
     @Scheduled(fixedDelay = 20000)
     public void queueSchedule() {
         queue = findByState();
@@ -69,8 +56,6 @@ public class Scheduler {
 
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
-         //   e.printStackTrace();
-            System.out.println("Queue is null");
         }
     }
 }

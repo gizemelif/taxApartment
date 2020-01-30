@@ -12,5 +12,4 @@ public class VerifyApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

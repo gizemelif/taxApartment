@@ -35,9 +35,8 @@ public class DataController {
     }
 
     @RequestMapping(method = RequestMethod.POST,path = "/addQuery")
-    public void addRepeatedQuery(@RequestParam String sqlString,
-                                 @RequestParam String queryType){
-        service.addRepoQueriedSql(sqlString,queryType);
+    public void addRepeatedQuery(){
+        service.addRepoQueriedSql();
     }
 
 

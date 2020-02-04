@@ -65,14 +65,24 @@ public class Data {
     private Long tc_tum_il_na;
     @Column(name = "ise_baslama_tarihi")
     private String isebaslamatarihi;
+    @Column(name = "ise_baslama_tarihi_vd")
+    private String isebaslamatarihi_vd;
     @Column(name = "faaliyet_aciklama")
     private String nacekoduaciklama;
+    @Column(name = "faaliyet_aciklama_vd")
+    private String nacekoduaciklama_vd;
     @Column(name = "matrah")
     private String matrah;
+    @Column(name = "matrah_vd")
+    private String matrah_vd;
     @Column(name = "tahakkuk_eden")
     private String tahakkukeden;
+    @Column(name = "tahakkuk_eden_vd")
+    private String tahakkukeden_vd;
     @Column(name = "yil")
     private String yil;
+    @Column(name = "yil_vd")
+    private String yil_vd;
 
     @Transient
     private String durum;
@@ -366,4 +376,51 @@ public class Data {
         this.vd_tum_il_na = vd_tum_il_na;
     }
 
+    public Date getTarih() {
+        return tarih;
+    }
+
+    public void setTarih(Date tarih) {
+        this.tarih = tarih;
+    }
+
+    public String getIsebaslamatarihi_vd() {
+        return isebaslamatarihi_vd;
+    }
+
+    public void setIsebaslamatarihi_vd(String isebaslamatarihi_vd) {
+        this.isebaslamatarihi_vd = isebaslamatarihi_vd;
+    }
+
+    public String getNacekoduaciklama_vd() {
+        return nacekoduaciklama_vd;
+    }
+
+    public void setNacekoduaciklama_vd(String nacekoduaciklama_vd) {
+        this.nacekoduaciklama_vd = nacekoduaciklama_vd;
+    }
+
+    public String getMatrah_vd() {
+        return matrah_vd;
+    }
+
+    public void setMatrah_vd(String matrah_vd) {
+        this.matrah_vd = matrah_vd;
+    }
+
+    public String getTahakkukeden_vd() {
+        return tahakkukeden_vd;
+    }
+
+    public void setTahakkukeden_vd(String tahakkukeden_vd) {
+        this.tahakkukeden_vd = tahakkukeden_vd;
+    }
+
+    public String getYil_vd() {
+        return yil_vd;
+    }
+
+    public void setYil_vd(String yil_vd) {
+        this.yil_vd = yil_vd;
+    }
 }

@@ -33,7 +33,7 @@ public class Scheduler {
         return queueRepo.findByState();
     }
 
-    @Scheduled(fixedDelay = 20000)
+    @Scheduled(fixedDelay = 30000)
     public void queueSchedule() {
         queue = findByState();
         if (queue == null) {

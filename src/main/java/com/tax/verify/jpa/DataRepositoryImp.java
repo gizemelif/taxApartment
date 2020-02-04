@@ -72,8 +72,8 @@ public class DataRepositoryImp {
                         ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(), respData.getVd_fiili_durum_donen(),
                                 respData.getPlaka(),respData.getOid(), respData.getVd_tum_il_na(), respData.getVd_adres_donen(),
-                                respData.getNacekoduaciklama(), respData.getIsebaslamatarihi(), respData.getMatrah(),
-                                respData.getTahakkukeden(), respData.getYil());
+                                respData.getNacekoduaciklama_vd(), respData.getIsebaslamatarihi_vd(), respData.getMatrah_vd(),
+                                respData.getTahakkukeden_vd(), respData.getYil_vd());
                     }
                     catch (Exception e)
                     {

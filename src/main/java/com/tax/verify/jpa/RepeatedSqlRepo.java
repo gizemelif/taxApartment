@@ -1,5 +1,6 @@
 package com.tax.verify.jpa;
 import com.tax.verify.jpa.pojo.Vd_Tc_Queried;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -40,27 +40,29 @@ public class QueueService {
     //Queue'ya üzerinden 1 aydan fazla zaman geçmiş vd ve tc lerin yeniden sorulması için gerekli olan sorgu da kaydedildi.
     public void addRepoQueriedSql(){
         Vd_Tc_Queried queried = new Vd_Tc_Queried();
-        String sql = "select * from vd_tc_index vti where vd_sorulan is not null and length(vd_sorulan)>0 and plaka is not null and vd_fiili_durum_donen='FAAL' and (matrah is null or faaliyet_aciklama is null or vd_adres_donen is null or yil is null or tahakkuk_eden is null or ise_baslama_tarihi is null) and plaka in ('34','6','35','7','16','48') and lastupdated<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
+        String sql = "select * from vd_tc_index vti where vd_sorulan is not null and length(vd_sorulan)>0 and  plaka is not null and vd_adres_donen is null and \n" +
+                "vd_fiili_durum_donen='FAAL' and plaka in ('34','6','35','7','16','48') and\n" +
+                "lastupdated_vd<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
         String queryType = "vd";
         queried.setSql_string(sql);
         queried.setNotification_mail("Queued");
         queried.setState(Vd_Tc_Queried.QueriedState.WAITING);
         queried.setCreated_at( new Date());
         queried.setQuery_type(queryType);
-        //repeatedSqlRepo.save(queried);
-        repeatedSqlRepo.saveAndFlush(queried);
+        repeatedSqlRepo.save(queried);
+        //repeatedSqlRepo.saveAndFlush(queried);
     }
     public void addRepoQueriedSqlTc(){
         Vd_Tc_Queried queried = new Vd_Tc_Queried();
-        String sql = "select * from vd_tc_index vti where tc_sorulan is not null and length(tc_sorulan)>0 and plaka is not null and tc_fiili_durum_donen='FAAL' and plaka in ('34','6','35','7','16','48') and lastupdated<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
+        String sql = "select * from vd_tc_index vti where tc_sorulan is not null and length(tc_sorulan)>0 and plaka is not null and tc_fiili_durum_donen='FAAL' and plaka not in ('34','6','35','7','16','48') and lastupdated<=date_trunc('day', current_timestamp - interval '1 month') order by plaka limit 10000";
         String queryType = "tc";
         queried.setSql_string(sql);
         queried.setNotification_mail("Queued");
         queried.setState(Vd_Tc_Queried.QueriedState.WAITING);
         queried.setCreated_at( new Date());
         queried.setQuery_type(queryType);
-        //repeatedSqlRepo.save(queried);
-        repeatedSqlRepo.saveAndFlush(queried);
+        repeatedSqlRepo.save(queried);
+        //repeatedSqlRepo.saveAndFlush(queried);
     }
 
 }

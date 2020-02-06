@@ -29,11 +29,21 @@ public class RepeatedQueries {
         return repeatedSqlRepo.findByState();
     }
 
+    @Scheduled(fixedDelay = 20000)
+    public void addRepeatedTcSql(){
+        queueService.addRepoQueriedSqlTc();
+    }
+    @Scheduled(fixedDelay = 50000)
+    public void addRepeatedVdSql(){
+        queueService.addRepoQueriedSql();
+    }
+
     @Scheduled(fixedDelay = 10000)
     public void scheduledVd(){
         vd_tc_queried = findByQuery();
 
         if (vd_tc_queried == null) {
+            //addRepeatedVdSql();
             return;
         }
         try {
@@ -42,8 +52,13 @@ public class RepeatedQueries {
                 dataRepositoryImp.updateVknTable(vd_tc_queried.getSql_string());
 
                 repeatedSqlRepo.updateStateProcessed(Vd_Tc_Queried.QueriedState.PROCESSED, "Process is completed", vd_tc_queried.getEnd_date(), vd_tc_queried.getJob_oid());
-
                 queueService.addRepoQueriedSql();
+            }else if(vd_tc_queried != null && (vd_tc_queried.getQuery_type().equals("tc") || vd_tc_queried.getQuery_type().equals("TC"))) {
+
+                repeatedSqlRepo.updateState(Vd_Tc_Queried.QueriedState.PROCESSING, "Process is starting...", vd_tc_queried.getJob_oid());
+                dataRepositoryImp.updateTable(vd_tc_queried.getSql_string());
+
+                repeatedSqlRepo.updateStateProcessed(Vd_Tc_Queried.QueriedState.PROCESSED, "Process is completed", vd_tc_queried.getEnd_date(), vd_tc_queried.getJob_oid());
 
             }
             return;
@@ -52,13 +67,12 @@ public class RepeatedQueries {
             LOGGER.info(e.getMessage());
         }
     }
-    @Scheduled(fixedDelay = 15000)
+    /*@Scheduled(fixedDelay = 15000)
     public void scheduledTc(){
         vd_tc_queried = findByQuery();
 
         if (vd_tc_queried == null) {
-            queueService.addRepoQueriedSqlTc();
-            return;
+            addRepeatedTcSql();
         }
         try {
             if (vd_tc_queried != null && (vd_tc_queried.getQuery_type().equals("tc") || vd_tc_queried.getQuery_type().equals("TC"))) {
@@ -74,5 +88,5 @@ public class RepeatedQueries {
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
         }
-    }
+    }*/
 }

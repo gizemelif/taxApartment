@@ -29,11 +29,10 @@ public class RepeatedQueries {
         return repeatedSqlRepo.findByState();
     }
 
-    @Scheduled(fixedDelay = 20000)
     public void addRepeatedTcSql(){
         queueService.addRepoQueriedSqlTc();
     }
-    @Scheduled(fixedDelay = 50000)
+
     public void addRepeatedVdSql(){
         queueService.addRepoQueriedSql();
     }
@@ -41,6 +40,8 @@ public class RepeatedQueries {
     @Scheduled(fixedDelay = 10000)
     public void scheduledVd(){
         vd_tc_queried = findByQuery();
+
+        addRepeatedVdSql();
 
         if (vd_tc_queried == null) {
             //addRepeatedVdSql();
@@ -52,7 +53,7 @@ public class RepeatedQueries {
                 dataRepositoryImp.updateVknTable(vd_tc_queried.getSql_string());
 
                 repeatedSqlRepo.updateStateProcessed(Vd_Tc_Queried.QueriedState.PROCESSED, "Process is completed", vd_tc_queried.getEnd_date(), vd_tc_queried.getJob_oid());
-                //queueService.addRepoQueriedSql();
+
             }else if(vd_tc_queried != null && (vd_tc_queried.getQuery_type().equals("tc") || vd_tc_queried.getQuery_type().equals("TC"))) {
 
                 repeatedSqlRepo.updateState(Vd_Tc_Queried.QueriedState.PROCESSING, "Process is starting...", vd_tc_queried.getJob_oid());

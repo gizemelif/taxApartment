@@ -65,4 +65,8 @@ public class QueueService {
         //repeatedSqlRepo.saveAndFlush(queried);
     }
 
+    //Excel okur
+    public void readExcel(){
+
+    }
 }

@@ -64,4 +64,16 @@ public class QueueService {
         //repeatedSqlRepo.saveAndFlush(queried);
     }
 
+    public void addRepoQueriedSqlVdTc(String sqlString, String queryType){
+        Vd_Tc_Queried queried = new Vd_Tc_Queried();
+        queried.setSql_string(sqlString);
+        queried.setQuery_type(queryType);
+        queried.setNotification_mail("Queued");
+        queried.setState(Vd_Tc_Queried.QueriedState.WAITING);
+        queried.setCreated_at( new Date());
+        queried.setQuery_type(queryType);
+        repeatedSqlRepo.save(queried);
+        //repeatedSqlRepo.saveAndFlush(queried);
+    }
+
 }

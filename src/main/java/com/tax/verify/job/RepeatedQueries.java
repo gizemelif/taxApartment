@@ -41,7 +41,8 @@ public class RepeatedQueries {
     public void scheduledVd(){
         vd_tc_queried = findByQuery();
 
-        addRepeatedVdSql();
+        //addRepeatedVdSql();
+        //addRepeatedTcSql();
 
         if (vd_tc_queried == null) {
             //addRepeatedVdSql();

@@ -54,8 +54,8 @@ public class DataController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/addQuery")
-    public void addRepeatedQuery() {
-        service.addRepoQueriedSql();
+    public void addRepeatedQuery(@RequestParam String sqlString, @RequestParam String queryType) {
+        service.addRepoQueriedSqlVdTc(sqlString,queryType);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/uploadExcelFile")

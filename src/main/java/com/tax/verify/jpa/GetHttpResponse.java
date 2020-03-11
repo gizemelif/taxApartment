@@ -175,7 +175,7 @@ public class GetHttpResponse {
                     JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
                     JSONObject resultData = (JSONObject) taxResult.get("data");
 
-                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("vdkodu").toString() != null) {
+                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("unvan").toString().length() != 0) {
                         break;
                     }
 

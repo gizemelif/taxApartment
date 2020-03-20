@@ -1,6 +1,5 @@
 package com.tax.verify.jpa;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tax.verify.dto.Data;
@@ -38,13 +37,24 @@ public class GetHttpResponse {
         String plate = "";
         String responseString = "";
 
+        JSONObject data1 = new JSONObject();
+        JSONObject data2 = new JSONObject();
+        JSONObject taxResult = new JSONObject();
+        JSONObject resultData = new JSONObject();
+
+        JSONObject tempData1 = new JSONObject();
+        JSONObject tempData2 = new JSONObject();
+        JSONObject tempTaxResult = new JSONObject();
+        JSONObject tempResultData = new JSONObject();
+
         for (int i = 0; i < newList.size(); i++) {
             Data myData = new Data();
 
             governmentNum = newList.get(i).getTckn();
             governmentNum = governmentNum.replace(" ", "");
             plate = "";
-            responseString = "";
+            String stuation = "TERK";
+            String firstFoundedPlate = "";
 
             AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
@@ -60,11 +70,27 @@ public class GetHttpResponse {
 
                     responseString = jsonResponse.getBody().toString();
 
-                    JSONObject data1 = new JSONObject(responseString);
-                    JSONObject data2 = (JSONObject) data1.get("data");
-                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
-                    JSONObject resultData = (JSONObject) taxResult.get("data");
+                    data1 = new JSONObject(responseString);
+                    data2 = (JSONObject) data1.get("data");
+                    taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    resultData = (JSONObject) taxResult.get("data");
 
+                    if(data2.get("durum_text").toString().equals(stuation)){
+                        firstFoundedPlate = plate;
+                        tempData1 = data1;
+                        tempData2 = data2;
+                        tempTaxResult = taxResult;
+                        tempResultData = resultData;
+                        continue;
+                    }else if( data2.get("durum_text").toString().length() == 0 && j == 81){
+                        data1 = tempData1;
+                        data2 = tempData2;
+                        taxResult = tempTaxResult;
+                        resultData = tempResultData;
+                        plate = firstFoundedPlate;
+
+                        break;
+                    }
                     if (data2.get("vdkodu").toString().length() != 0 || data2.get("unvan").toString().length() != 0) {
                         break;
                     }
@@ -78,11 +104,6 @@ public class GetHttpResponse {
                 }
 
             }
-
-            JSONObject data1 = new JSONObject(responseString);
-            JSONObject data2 = (JSONObject) data1.get("data");
-            JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
-            JSONObject resultData = (JSONObject) taxResult.get("data");
             if (!resultData.get("satirlarSize").equals(satirlarSize)) {
                 JSONArray satirlar = resultData.getJSONArray("satirlar");
                 for (Object o : satirlar) {
@@ -146,6 +167,17 @@ public class GetHttpResponse {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         List<Data> myDatas = new ArrayList<>();
         Integer satirlarSize = 0;
+        JSONObject data1 = new JSONObject();
+        JSONObject data2 = new JSONObject();
+        JSONObject taxResult = new JSONObject();
+        JSONObject resultData = new JSONObject();
+
+        JSONObject tempData1 = new JSONObject();
+        JSONObject tempData2 = new JSONObject();
+        JSONObject tempTaxResult = new JSONObject();
+        JSONObject tempResultData = new JSONObject();
+
+
 
         for (int i = 0; i < newList.size(); i++) {
             Data myData = new Data();
@@ -154,6 +186,8 @@ public class GetHttpResponse {
             taxNumber = taxNumber.replace(" ", "");
             String plate = "";
             String responseString = "";
+            String stuation = "TERK";
+            String firstFoundedPlate = "";
 
             AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
@@ -170,14 +204,35 @@ public class GetHttpResponse {
 
                     responseString = jsonResponse.getBody().toString();
 
-                    JSONObject data1 = new JSONObject(responseString);
-                    JSONObject data2 = (JSONObject) data1.get("data");
-                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
-                    JSONObject resultData = (JSONObject) taxResult.get("data");
+                    data1 = new JSONObject(responseString);
+                    data2 = (JSONObject) data1.get("data");
+                    taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    resultData = (JSONObject) taxResult.get("data");
 
-                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("unvan").toString().length() != 0) {
+                    //eğer terk döndüğünde tüm illeri sorgulamamışsa temp değerleri gerçek değerlere assign et ve döngüden çık
+                    //böylece tüm iller sorgulandıktan sonra terk ten farklı bir sonuç dönmezse ilk dönen terk bilgilerini kaybetme
+
+                    if(data2.get("durum_text").toString().equals(stuation)){
+                        firstFoundedPlate = plate;
+                        tempData1 = data1;
+                        tempData2 = data2;
+                        tempTaxResult = taxResult;
+                        tempResultData = resultData;
+                        continue;
+                    }else if( data2.get("durum_text").toString().length() == 0 && j == 81){
+                        data1 = tempData1;
+                        data2 = tempData2;
+                        taxResult = tempTaxResult;
+                        resultData = tempResultData;
+                        plate = firstFoundedPlate;
+
                         break;
                     }
+                    if (data2.get("vdkodu").toString().length() != 0 || data2.get("unvan").toString().length() != 0){
+                        break;
+                    }
+
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -185,10 +240,6 @@ public class GetHttpResponse {
                     mailer.sendEmail("gizemelif.atalay@gvg.com.tr", "HTTP Response hatası", e.toString());
                 }
             }
-            JSONObject data1 = new JSONObject(responseString);
-            JSONObject data2 = (JSONObject) data1.get("data");
-            JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
-            JSONObject resultData = (JSONObject) taxResult.get("data");
             if (!resultData.get("satirlarSize").equals(satirlarSize)) {
                 JSONArray satirlar = resultData.getJSONArray("satirlar");
                 for (Object o : satirlar) {

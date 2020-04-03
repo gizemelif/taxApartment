@@ -3,9 +3,11 @@ import com.tax.verify.dto.Data;
 import com.tax.verify.jpa.*;
 import com.tax.verify.jpa.pojo.Queue;
 import com.tax.verify.jpa.QueueService;
+import com.tax.verify.service.JsonObjectMapper;
 import com.tax.verify.thirdparty.excel.ExcelPOIHelper;
 import com.tax.verify.thirdparty.excel.MyCell;
 import com.tax.verify.thirdparty.excel.ReadExcel;
+import lombok.NonNull;
 import org.apache.catalina.connector.Response;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("api")
 public class DataController {
+    private GetHttpResponse getHttpResponse;
+
+    public DataController(GetHttpResponse getHttpResponse) {
+        this.getHttpResponse = getHttpResponse;
+    }
+
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
     @Autowired
@@ -93,6 +102,30 @@ public class DataController {
             model.addAttribute("message","File missing! Please upload an excel file.");
         }
         return "excel";
+    }
+
+    @PostMapping(path = "sendToVerify")
+    public void createSqlString(@PathVariable("jsonResponseString") String jsonResponseString) {
+
+        Data data = new Data();
+        data = JsonObjectMapper.jsonMapper(jsonResponseString);
+
+        String text = "";
+        String cityCode = "";
+        String queryType = "";
+        if(data != null) {
+            queryType = "TC";
+            String sql = "SELECT * FROM VD_TC_INDEX WHERE VD_SORULAN = " + text + " AND PLAKA = " + cityCode + "\"";
+            service.setQueueRepo(sql, queryType);
+
+        }
+        if(text.equals("governmentNumber")){
+            queryType = "VD";
+            String sql = "SELECT * FROM VD_TC_INDEX WHERE TC_SORULAN = " + text + " AND PLAKA = " + cityCode + "\"";
+            service.setQueueRepo(sql, queryType);
+        }
+
+
     }
 
 

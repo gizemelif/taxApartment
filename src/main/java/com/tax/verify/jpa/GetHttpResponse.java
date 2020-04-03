@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tax.verify.dto.Data;
 import com.tax.verify.mailSender.EmailSender;
+import com.tax.verify.service.JsonObjectMapper;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -404,12 +405,7 @@ public class GetHttpResponse {
 
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + governmentNum.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
-                            .header("accept", "application/json")
-                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-                            .header("Connection", "keep-alive")
-                            .socketTimeout(120000)
-                            .asJson();
+                    HttpResponse jsonResponse = JsonObjectMapper.httpGet(governmentNum.trim(), newList.get(i).getPlaka());
 
                     String responseString = jsonResponse.getBody().toString();
 

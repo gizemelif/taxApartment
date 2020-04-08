@@ -104,28 +104,18 @@ public class DataController {
         return "excel";
     }
 
-    @PostMapping(path = "sendToVerify")
-    public void createSqlString(@PathVariable("jsonResponseString") String jsonResponseString) {
+    @PostMapping("/sendToVerify")
+    @ResponseBody
+    public void createSqlString(@RequestParam("jsonResponseString") String jsonResponseString,
+                                @RequestParam("type") String type, @RequestParam("tckn") String tckn,
+                                @RequestParam("vkn") String vkn){
 
         Data data = new Data();
-        data = JsonObjectMapper.jsonMapper(jsonResponseString);
-
-        String text = "";
-        String cityCode = "";
-        String queryType = "";
-        if(data != null) {
-            queryType = "TC";
-            String sql = "SELECT * FROM VD_TC_INDEX WHERE VD_SORULAN = " + text + " AND PLAKA = " + cityCode + "\"";
-            service.setQueueRepo(sql, queryType);
-
+        if(type.equals("TC") || type.equals("tc")) {
+            data = JsonObjectMapper.jsonMapperTc(jsonResponseString);
+        }else{
+            data = JsonObjectMapper.jsonMapperVD(jsonResponseString);
         }
-        if(text.equals("governmentNumber")){
-            queryType = "VD";
-            String sql = "SELECT * FROM VD_TC_INDEX WHERE TC_SORULAN = " + text + " AND PLAKA = " + cityCode + "\"";
-            service.setQueueRepo(sql, queryType);
-        }
-
-
     }
 
 

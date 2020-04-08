@@ -16,7 +16,7 @@ public class JsonObjectMapper {
     @Autowired
     private IndexRepository ındexRepository;
 
-    public static Data jsonMapper(String responseString){
+    public static Data jsonMapperTc(String responseString){
         Integer satirlarSize = 0;
         Data myData = new Data();
 
@@ -72,12 +72,81 @@ public class JsonObjectMapper {
 
         return myData;
     }
+    public static Data jsonMapperVD(String responseString){
+        Integer satirlarSize = 0;
+        Data myData = new Data();
+
+        JSONObject data1 = new JSONObject(responseString);
+        JSONObject data2 = (JSONObject) data1.get("data");
+        JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+        JSONObject resultData = (JSONObject) taxResult.get("data");
+        if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+            JSONArray satirlar = resultData.getJSONArray("satirlar");
+            for (Object o : satirlar) {
+                JSONObject jsonLineItem = (JSONObject) o;
+                myData.setMatrah(jsonLineItem.get("matrah").toString());
+                myData.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                myData.setYil(jsonLineItem.get("yil").toString());
+                break;
+            }
+        }else{
+            myData.setMatrah("N/A");
+            myData.setTahakkukeden("N/A");
+            myData.setYil("N/A");
+        }
+        if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
+
+            myData.setVd_fiili_durum_donen("N/A");
+            myData.setVd_vkn("vkn");
+            myData.setVd_unvan_donen("N/A");
+            myData.setVd_vdkodu("N/A");
+            myData.setVd_tc_donen("N/A");
+            //myData.setOid(newList.get(i).getOid());
+            myData.setPlaka("N/A");
+            myData.setNacekoduaciklama_vd("N/A");
+            myData.setNacekoduaciklama_vd("N/A");
+            myData.setVd_adres_donen("N/A");
+
+        }
+        //myData.setOid(newList.get(i).getOid());
+        myData.setVd_vkn("vkn");
+        myData.setPlaka("plaka");
+        myData.setVd_vdkodu(data2.get("vdkodu").toString());
+        myData.setVd_unvan_donen(data2.get("unvan").toString());
+        myData.setVd_tc_donen(data2.get("tckn").toString());
+        myData.setVd_fiili_durum_donen((String) data2.get("durum_text"));
+
+        if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0 ){
+            myData.setVd_adres_donen("N/A");
+            myData.setIsebaslamatarihi("N/A");
+            myData.setNacekoduaciklama("N/A");
+        }else{
+            myData.setVd_adres_donen(resultData.get("adres").toString());
+            myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+            myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+        }
+
+        return myData;
+    }
 
     public static HttpResponse httpGet(String queryType, String plaka){
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?tc=" + queryType + "&plate=" + plaka + "&detail=1")
+                .header("accept", "application/json")
+                .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
+                .header("Connection", "keep-alive")
+                .socketTimeout(120000)
+                .asJson();
+
+        return jsonResponse;
+    }
+    public static HttpResponse httpGetVd(String queryType, String plaka){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + queryType + "&plate=" + plaka + "&detail=1")
                 .header("accept", "application/json")
                 .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
                 .header("Connection", "keep-alive")

@@ -30,6 +30,9 @@ public interface IndexRepository extends JpaRepository<Data, String> {
                    @Param("ise_baslama_tarihi_vd") String ise_baslama_tarihi_vd, @Param("matrah_vd") String matrah_vd,
                    @Param("tahakkuk_eden_vd") String tahakkuk_eden_vd, @Param("yil_vd") String yil_vd);
 
-    @Query(value = "SELECT * FROM Data d WHERE d.taxNumber=:tax_number and d.plaka=:plaka", nativeQuery = true)
-    Data findByState();
+    @Query(value = "SELECT * FROM Data d WHERE d.taxNumber=:vd_vkn and d.plaka=:plaka", nativeQuery = true)
+    Data findByTaxNumber();
+
+    @Query(value = "SELECT * FROM Data d WHERE d.government_number=:tckn and d.plaka=:plaka", nativeQuery = true)
+    Data findByGovNumber();
 }

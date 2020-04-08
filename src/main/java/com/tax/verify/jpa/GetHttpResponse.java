@@ -313,13 +313,7 @@ public class GetHttpResponse {
                     String responseString = "";
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = Unirest.get("http://192.168.1.31:8687/vd?vkn=" + taxNumber.trim() + "&plate=" + newList.get(i).getPlaka() + "&detail=1")
-                            .header("accept", "application/json")
-                            .header("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-                            .header("Connection", "keep-alive")
-                            .socketTimeout(120000)
-                            .asJson();
-
+                    HttpResponse jsonResponse = JsonObjectMapper.httpGetVd(taxNumber.trim(), newList.get(i).getPlaka());
                     responseString = jsonResponse.getBody().toString();
 
                     JSONObject data1 = new JSONObject(responseString);

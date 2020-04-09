@@ -8,11 +8,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
 @Repository
 @org.springframework.transaction.annotation.Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IndexRepository extends JpaRepository<Data, String> {
     //Tckn ile yapılan sorgudan donen değerleri update eder.
-
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("UPDATE Data c SET c.tckn =:tckn, c.unvan=:unvan, c.vdkodu=:vdkodu, c.vkn=:vkn, c.durum_text=:durum_text, plaka=:plaka, lastupdated=current_timestamp, tc_tum_il_na =:tc_tum_il_na, tc_adres_donen=:tc_adres_donen, faaliyet_aciklama=:faaliyet_aciklama, ise_baslama_tarihi=:ise_baslama_tarihi, matrah=:matrah, tahakkuk_eden=:tahakkuk_eden, yil=:yil where c.oid=:oid")
     void update(@Param("tckn") String tckn,@Param("unvan") String unvan,@Param("vdkodu") String vdkodu, @Param("vkn") String vkn,
@@ -30,9 +33,10 @@ public interface IndexRepository extends JpaRepository<Data, String> {
                    @Param("ise_baslama_tarihi_vd") String ise_baslama_tarihi_vd, @Param("matrah_vd") String matrah_vd,
                    @Param("tahakkuk_eden_vd") String tahakkuk_eden_vd, @Param("yil_vd") String yil_vd);
 
-    @Query(value = "SELECT * FROM Data d WHERE d.taxNumber=:vd_vkn and d.plaka=:plaka", nativeQuery = true)
-    Data findByTaxNumber();
+    @Query(value = "SELECT * FROM VD_TC_INDEX d WHERE d.vd_sorulan = ?1 and d.plaka = ?2", nativeQuery = true)
+    List<Data> findByTaxNumberAndPlate(String taxNumber, String plate);
 
-    @Query(value = "SELECT * FROM Data d WHERE d.government_number=:tckn and d.plaka=:plaka", nativeQuery = true)
-    Data findByGovNumber();
+    @Query(value = "SELECT * FROM VD_TC_INDEX d WHERE d.government_number = 1? and d.plaka = 2?", nativeQuery = true)
+    List<Data> findByGovNumberAndPlate(String governmentNumber, String plate);
+
 }

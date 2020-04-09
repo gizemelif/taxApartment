@@ -4,6 +4,7 @@ import com.tax.verify.dto.Data;
 import com.tax.verify.job.RepeatedQueries;
 import com.tax.verify.job.Scheduler;
 import com.tax.verify.jpa.pojo.Queue;
+import com.tax.verify.service.JsonObjectMapper;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class DataRepositoryImp {
 
     @Autowired
     Queue queue;
+
+    @Autowired
+    private JsonObjectMapper jsonObjectMapper;
 
    public List<Data> getSqlQuery(String sql) {
         Session session = em.unwrap(Session.class);
@@ -136,6 +140,68 @@ public class DataRepositoryImp {
     public void printQueues(){
         List<Queue> queues = em.createQuery("SELECT q FROM Queue q").getResultList();
         queues.stream().forEach(q -> System.out.println(q.getSql_string()));
+    }
+
+    public void updateWithGovernmentFromRita(List<Data> newList, String responseString){
+      Data tempData = new Data();
+       try{
+           if(newList.size()>0){
+               newList.parallelStream().forEach( d ->{
+                   try {
+                       List<Data> list_for_parallel = new ArrayList<>();
+                       list_for_parallel.add(d);
+                       try{
+                           Data respData = new Data();
+                           for(int i=0; i < list_for_parallel.size(); i++){
+                               respData = JsonObjectMapper.jsonMapperTc(list_for_parallel, responseString);
+                           }
+                           ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
+                                   respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
+                                   respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
+                                   respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
+                                   respData.getYil());
+                       }
+                       catch (Exception e)
+                       {
+                           e.printStackTrace();
+                       }
+
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
+               });
+           }
+           tempData = JsonObjectMapper.jsonMapperTc(newList, responseString);
+           //insert sorgusu eklenecek.
+           insertWithQuery(tempData);
+
+
+       }catch (Exception e){e.printStackTrace();}
+
+    }
+    public void updateWithTaxNumberFromRita(List<Data> dataList, String responseString){
+
+    }
+
+    public void insertWithQuery(Data data){
+        em.createNativeQuery("INSERT INTO data (tckn, unvan, vdkodu, vkn, durum_text, plaka, oid, tc_tum_il_na" +
+                "tc_adres_donen, faaliyet_aciklama, ise_baslama_tarihi, matrah, tahakkuk_eden, yil)" +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+        .setParameter(1, data.getTckn())
+        .setParameter(2, data.getUnvan())
+        .setParameter(3, data.getVdkodu())
+        .setParameter(4, data.getVkn())
+        .setParameter(5, data.getDurum_text())
+        .setParameter(6, data.getPlaka())
+        .setParameter(7, data.getOid())
+        .setParameter(8, data.getTc_tum_il_na())
+        .setParameter(9, data.getTc_adres_donen())
+        .setParameter(10, data.getNacekoduaciklama())
+        .setParameter(11, data.getIsebaslamatarihi())
+        .setParameter(12, data.getMatrah())
+        .setParameter(13, data.getTahakkukeden())
+        .setParameter(14, data.getYil())
+        .executeUpdate();
     }
 
 

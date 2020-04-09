@@ -36,7 +36,7 @@ public class DataController {
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
     @Autowired
-    private IndexRepository dataRepository;
+    private IndexRepository indexRepository;
     @Autowired
     private RepeatedSqlRepo repo;
 
@@ -107,14 +107,23 @@ public class DataController {
     @PostMapping("/sendToVerify")
     @ResponseBody
     public void createSqlString(@RequestParam("jsonResponseString") String jsonResponseString,
-                                @RequestParam("type") String type, @RequestParam("tckn") String tckn,
-                                @RequestParam("vkn") String vkn){
+                                @RequestParam("text") String text, @RequestParam("type") String type,
+                                @RequestParam("plate") String plate){
 
         Data data = new Data();
+        List<Data> dataList = new ArrayList<>();
+
         if(type.equals("TC") || type.equals("tc")) {
-            data = JsonObjectMapper.jsonMapperTc(jsonResponseString);
+
+            dataList = indexRepository.findByGovNumberAndPlate(text, plate);
+
+            //eğer vd_tc_index tablosunda var olan bir kayıt ise bilgileri update edilir.
+            dataRepositoryImp.updateWithGovernmentFromRita(dataList, jsonResponseString);
+
+
         }else{
-            data = JsonObjectMapper.jsonMapperVD(jsonResponseString);
+            dataList = indexRepository.findByTaxNumberAndPlate(text, plate);
+            dataRepositoryImp.updateWithTaxNumberFromRita(dataList, jsonResponseString);
         }
     }
 

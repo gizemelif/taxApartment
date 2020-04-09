@@ -170,17 +170,50 @@ public class DataRepositoryImp {
                        e.printStackTrace();
                    }
                });
+           } else {
+               tempData = JsonObjectMapper.jsonMapperTc(newList, responseString);
+               //insert sorgusu eklenecek.
+               insertWithQuery(tempData);
            }
-           tempData = JsonObjectMapper.jsonMapperTc(newList, responseString);
-           //insert sorgusu eklenecek.
-           insertWithQuery(tempData);
-
 
        }catch (Exception e){e.printStackTrace();}
 
     }
     public void updateWithTaxNumberFromRita(List<Data> dataList, String responseString){
+        Data tempData = new Data();
+        try{
+            if(dataList.size()>0){
+                dataList.parallelStream().forEach( d ->{
+                    try {
+                        List<Data> list_for_parallel = new ArrayList<>();
+                        list_for_parallel.add(d);
+                        try{
+                            Data respData = new Data();
+                            for(int i=0; i < list_for_parallel.size(); i++){
+                                respData = JsonObjectMapper.jsonMapperVD(list_for_parallel, responseString);
+                            }
+                            ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
+                                    respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
+                                    respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
+                                    respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
+                                    respData.getYil());
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }else {
+                tempData = JsonObjectMapper.jsonMapperVD(dataList, responseString);
+                //insert sorgusu eklenecek.
+                insertWithQueryForTaxNumber(tempData);
+            }
+
+        }catch (Exception e){e.printStackTrace();}
     }
 
     public void insertWithQuery(Data data){
@@ -202,6 +235,26 @@ public class DataRepositoryImp {
         .setParameter(13, data.getTahakkukeden())
         .setParameter(14, data.getYil())
         .executeUpdate();
+    }
+    public void insertWithQueryForTaxNumber(Data data){
+        em.createNativeQuery("INSERT INTO data (vd_vkn, vd_unvan_donen, vd_vdkodu, vd_tc_donen, vd_fiili_durum_donen, plaka, oid, vd_tum_il_na" +
+                "vd_adres_donen, faaliyet_aciklama_vd, ise_baslama_tarihi_vd, matrah_vd, tahakkuk_eden_vd, yil_vd)" +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+                .setParameter(1, data.getVd_vkn())
+                .setParameter(2, data.getVd_unvan_donen())
+                .setParameter(3, data.getVd_vdkodu())
+                .setParameter(4, data.getVd_tc_donen())
+                .setParameter(5, data.getVd_fiili_durum_donen())
+                .setParameter(6, data.getPlaka())
+                .setParameter(7, data.getOid())
+                .setParameter(8, data.getVd_tum_il_na())
+                .setParameter(9, data.getVd_adres_donen())
+                .setParameter(10, data.getNacekoduaciklama_vd())
+                .setParameter(11, data.getIsebaslamatarihi_vd())
+                .setParameter(12, data.getMatrah_vd())
+                .setParameter(13, data.getTahakkukeden_vd())
+                .setParameter(14, data.getYil_vd())
+                .executeUpdate();
     }
 
 

@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
@@ -21,10 +20,11 @@ public class JsonObjectMapper {
     public static Data jsonMapperTc(List<Data> dataList, String responseString){
         Integer satirlarSize = 0;
         Data myData = new Data();
+        Data data = new Data();
 
         if(dataList.size() > 0 || dataList != null){
             for (int i = 0; i < dataList.size(); i++) {
-                Data data = new Data();
+                data = new Data();
                 try {
                     JSONObject data1 = new JSONObject(responseString);
                     JSONObject data2 = (JSONObject) data1.get("data");
@@ -76,8 +76,9 @@ public class JsonObjectMapper {
                         data.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
                     }
                 }catch (Exception e){e.printStackTrace();}
-                return data;
+
             }
+            return data;
         }
 
         JSONObject data1 = new JSONObject(responseString);
@@ -130,9 +131,70 @@ public class JsonObjectMapper {
 
         return myData;
     }
-    public static Data jsonMapperVD(String responseString){
+    public static Data jsonMapperVD(List<Data> dataList, String responseString){
         Integer satirlarSize = 0;
         Data myData = new Data();
+        Data data = new Data();
+
+        if(dataList.size() > 0 || dataList != null) {
+            for (int i = 0; i < dataList.size(); i++) {
+                data = new Data();
+                try {
+                    JSONObject data1 = new JSONObject(responseString);
+                    JSONObject data2 = (JSONObject) data1.get("data");
+                    JSONObject taxResult = (JSONObject) data2.get("TaxDetailResult");
+                    JSONObject resultData = (JSONObject) taxResult.get("data");
+                    if (!resultData.get("satirlarSize").equals(satirlarSize)) {
+                        JSONArray satirlar = resultData.getJSONArray("satirlar");
+                        for (Object o : satirlar) {
+                            JSONObject jsonLineItem = (JSONObject) o;
+                            data.setMatrah(jsonLineItem.get("matrah").toString());
+                            data.setTahakkukeden(jsonLineItem.get("tahakkukeden").toString());
+                            data.setYil(jsonLineItem.get("yil").toString());
+                            break;
+                        }
+                    } else {
+                        data.setMatrah("N/A");
+                        data.setTahakkukeden("N/A");
+                        data.setYil("N/A");
+                    }
+                    if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
+
+                        data.setVd_fiili_durum_donen("N/A");
+                        data.setVd_vkn("vkn");
+                        data.setVd_unvan_donen("N/A");
+                        data.setVd_vdkodu("N/A");
+                        data.setVd_tc_donen("N/A");
+                        data.setOid(dataList.get(i).getOid());
+                        data.setPlaka("N/A");
+                        data.setNacekoduaciklama_vd("N/A");
+                        data.setNacekoduaciklama_vd("N/A");
+                        data.setVd_adres_donen("N/A");
+
+                    }
+                    data.setOid(dataList.get(i).getOid());
+                    data.setVd_vkn("vkn");
+                    data.setPlaka("plaka");
+                    data.setVd_vdkodu(data2.get("vdkodu").toString());
+                    data.setVd_unvan_donen(data2.get("unvan").toString());
+                    data.setVd_tc_donen(data2.get("tckn").toString());
+                    data.setVd_fiili_durum_donen((String) data2.get("durum_text"));
+
+                    if (resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0) {
+                        data.setVd_adres_donen("N/A");
+                        data.setIsebaslamatarihi("N/A");
+                        data.setNacekoduaciklama("N/A");
+                    } else {
+                        data.setVd_adres_donen(resultData.get("adres").toString());
+                        data.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
+                        data.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return data;
+        }
 
         JSONObject data1 = new JSONObject(responseString);
         JSONObject data2 = (JSONObject) data1.get("data");
@@ -147,7 +209,7 @@ public class JsonObjectMapper {
                 myData.setYil(jsonLineItem.get("yil").toString());
                 break;
             }
-        }else{
+        } else {
             myData.setMatrah("N/A");
             myData.setTahakkukeden("N/A");
             myData.setYil("N/A");
@@ -159,14 +221,12 @@ public class JsonObjectMapper {
             myData.setVd_unvan_donen("N/A");
             myData.setVd_vdkodu("N/A");
             myData.setVd_tc_donen("N/A");
-            //myData.setOid(newList.get(i).getOid());
             myData.setPlaka("N/A");
             myData.setNacekoduaciklama_vd("N/A");
             myData.setNacekoduaciklama_vd("N/A");
             myData.setVd_adres_donen("N/A");
 
         }
-        //myData.setOid(newList.get(i).getOid());
         myData.setVd_vkn("vkn");
         myData.setPlaka("plaka");
         myData.setVd_vdkodu(data2.get("vdkodu").toString());
@@ -174,16 +234,15 @@ public class JsonObjectMapper {
         myData.setVd_tc_donen(data2.get("tckn").toString());
         myData.setVd_fiili_durum_donen((String) data2.get("durum_text"));
 
-        if(resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0 ){
+        if (resultData.get("adres").toString().length() == 0 || resultData.get("isebaslamatarihi").toString().length() == 0 || resultData.get("nacekoduaciklama").toString().length() == 0) {
             myData.setVd_adres_donen("N/A");
             myData.setIsebaslamatarihi("N/A");
             myData.setNacekoduaciklama("N/A");
-        }else{
+        } else {
             myData.setVd_adres_donen(resultData.get("adres").toString());
             myData.setIsebaslamatarihi(resultData.get("isebaslamatarihi").toString());
             myData.setNacekoduaciklama(resultData.get("nacekoduaciklama").toString());
         }
-
         return myData;
     }
 

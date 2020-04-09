@@ -27,11 +27,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("api")
 public class DataController {
-    private GetHttpResponse getHttpResponse;
-
-    public DataController(GetHttpResponse getHttpResponse) {
-        this.getHttpResponse = getHttpResponse;
-    }
 
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
@@ -113,7 +108,7 @@ public class DataController {
         Data data = new Data();
         List<Data> dataList = new ArrayList<>();
 
-        if(type.equals("TC") || type.equals("tc")) {
+        if(type.equals("tc")) {
 
             dataList = indexRepository.findByGovNumberAndPlate(text, plate);
 
@@ -121,7 +116,7 @@ public class DataController {
             dataRepositoryImp.updateWithGovernmentFromRita(dataList, jsonResponseString);
 
 
-        }else{
+        }else if(type.equals("vkn")){
             dataList = indexRepository.findByTaxNumberAndPlate(text, plate);
             dataRepositoryImp.updateWithTaxNumberFromRita(dataList, jsonResponseString);
         }

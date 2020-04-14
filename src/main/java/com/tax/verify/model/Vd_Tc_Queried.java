@@ -1,4 +1,4 @@
-package com.tax.verify.jpa.pojo;
+package com.tax.verify.model;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;

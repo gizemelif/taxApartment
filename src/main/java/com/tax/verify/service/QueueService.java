@@ -1,7 +1,11 @@
-package com.tax.verify.jpa;
+package com.tax.verify.service;
 
-import com.tax.verify.jpa.pojo.Queue;
-import com.tax.verify.jpa.pojo.Vd_Tc_Queried;
+import com.tax.verify.dao.DataRepositoryImp;
+import com.tax.verify.dao.IndexRepository;
+import com.tax.verify.dao.QueueRepo;
+import com.tax.verify.dao.RepeatedSqlRepo;
+import com.tax.verify.model.Queue;
+import com.tax.verify.model.Vd_Tc_Queried;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -9,7 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import static com.tax.verify.jpa.pojo.Queue.QueueState.WAITING;
+import static com.tax.verify.model.Queue.QueueState.WAITING;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)

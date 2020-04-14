@@ -1,4 +1,4 @@
-package com.tax.verify.dto;
+package com.tax.verify.model;
 
 public class Metadata {
     private String optime;

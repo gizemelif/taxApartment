@@ -1,4 +1,4 @@
-package com.tax.verify.dto;
+package com.tax.verify.model;
 
 public class Message {
     private String text;

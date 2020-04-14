@@ -1,23 +1,16 @@
 package com.tax.verify.api;
-import com.tax.verify.dto.Data;
-import com.tax.verify.jpa.*;
-import com.tax.verify.jpa.pojo.Queue;
-import com.tax.verify.jpa.QueueService;
-import com.tax.verify.service.JsonObjectMapper;
+import com.tax.verify.model.Data;
+import com.tax.verify.dao.*;
+import com.tax.verify.model.Queue;
+import com.tax.verify.service.QueueService;
 import com.tax.verify.thirdparty.excel.ExcelPOIHelper;
-import com.tax.verify.thirdparty.excel.MyCell;
 import com.tax.verify.thirdparty.excel.ReadExcel;
-import lombok.NonNull;
-import org.apache.catalina.connector.Response;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +20,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("api")
 public class DataController {
+
+    private final DataDaoImpl dataDaoImpl;
+
+    @Autowired
+    public DataController(DataDaoImpl dataDaoImpl){
+        this.dataDaoImpl = dataDaoImpl;
+    }
 
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
@@ -106,19 +106,24 @@ public class DataController {
                                 @RequestParam("plate") String plate){
 
         Data data = new Data();
-        List<Data> dataList = new ArrayList<>();
+        List<Data> datas = new ArrayList<>();
 
         if(type.equals("tc")) {
 
-            dataList = indexRepository.findByGovNumberAndPlate(text, plate);
+            List<Data> dataList = indexRepository.findByGovNumberAndPlate(text, plate);
 
             //eğer vd_tc_index tablosunda var olan bir kayıt ise bilgileri update edilir.
             dataRepositoryImp.updateWithGovernmentFromRita(dataList, jsonResponseString);
 
 
         }else if(type.equals("vkn")){
-            dataList = indexRepository.findByTaxNumberAndPlate(text, plate);
-            dataRepositoryImp.updateWithTaxNumberFromRita(dataList, jsonResponseString);
+            //data = indexRepository.findByTaxNumberAndPlate(text, plate);
+            datas = dataDaoImpl.selectAllDatas(text, plate);
+
+            for(Data data1 : datas){
+                data1.setPlaka(plate);
+                dataRepositoryImp.updateWithTaxNumberFromRita(datas, jsonResponseString);
+            }
         }
     }
 

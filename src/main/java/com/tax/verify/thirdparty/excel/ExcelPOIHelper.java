@@ -1,6 +1,6 @@
 package com.tax.verify.thirdparty.excel;
 
-import com.tax.verify.dto.Data;
+import com.tax.verify.model.Data;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;

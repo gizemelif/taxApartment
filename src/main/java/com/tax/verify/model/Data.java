@@ -1,4 +1,4 @@
-package com.tax.verify.dto;
+package com.tax.verify.model;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;

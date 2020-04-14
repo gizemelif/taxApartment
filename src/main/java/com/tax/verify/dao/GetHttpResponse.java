@@ -1,8 +1,8 @@
-package com.tax.verify.jpa;
+package com.tax.verify.dao;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tax.verify.dto.Data;
+import com.tax.verify.model.Data;
 import com.tax.verify.mailSender.EmailSender;
 import com.tax.verify.service.JsonObjectMapper;
 import kong.unirest.HttpResponse;
@@ -344,7 +344,6 @@ public class GetHttpResponse {
                             myData.setVd_tc_donen("N/A");
                             myData.setOid(newList.get(i).getOid());
                             myData.setPlaka("N/A");
-                            myData.setNacekoduaciklama_vd("N/A");
                             myData.setNacekoduaciklama_vd("N/A");
                             myData.setVd_adres_donen("N/A");
 

@@ -1,15 +1,15 @@
 package com.tax.verify.job;
 
-import com.tax.verify.jpa.DataRepositoryImp;
-import com.tax.verify.jpa.QueueRepo;
-import com.tax.verify.jpa.QueueService;
-import com.tax.verify.jpa.pojo.Queue;
+import com.tax.verify.dao.DataRepositoryImp;
+import com.tax.verify.dao.QueueRepo;
+import com.tax.verify.service.QueueService;
+import com.tax.verify.model.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import static com.tax.verify.jpa.pojo.Queue.QueueState.PROCESSED;
+import static com.tax.verify.model.Queue.QueueState.PROCESSED;
 
 @Component
 public class Scheduler {

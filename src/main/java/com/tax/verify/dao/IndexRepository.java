@@ -1,6 +1,6 @@
-package com.tax.verify.jpa;
+package com.tax.verify.dao;
 
-import com.tax.verify.dto.Data;
+import com.tax.verify.model.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -33,10 +31,10 @@ public interface IndexRepository extends JpaRepository<Data, String> {
                    @Param("ise_baslama_tarihi_vd") String ise_baslama_tarihi_vd, @Param("matrah_vd") String matrah_vd,
                    @Param("tahakkuk_eden_vd") String tahakkuk_eden_vd, @Param("yil_vd") String yil_vd);
 
-    @Query(value = "SELECT * FROM VD_TC_INDEX d WHERE d.vd_sorulan = ?1 and d.plaka = ?2", nativeQuery = true)
-    List<Data> findByTaxNumberAndPlate(String taxNumber, String plate);
+    @Query(value = "SELECT * FROM Data d WHERE d.vd_vkn =:taxNumber and d.plaka =:plaka", nativeQuery = true)
+    Data findByTaxNumberAndPlate(@Param("taxNumber") String taxNumber, @Param("plaka") String plate);
 
-    @Query(value = "SELECT * FROM VD_TC_INDEX d WHERE d.government_number = 1? and d.plaka = 2?", nativeQuery = true)
+    @Query(value = "SELECT * FROM VD_TC_INDEX d WHERE d.tc_sorulan = 1? and d.plaka = 2?", nativeQuery = true)
     List<Data> findByGovNumberAndPlate(String governmentNumber, String plate);
 
 }

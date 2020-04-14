@@ -1,6 +1,6 @@
-package com.tax.verify.jpa;
+package com.tax.verify.dao;
 
-import com.tax.verify.jpa.pojo.Queue;
+import com.tax.verify.model.Queue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

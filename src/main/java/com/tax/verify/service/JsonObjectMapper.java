@@ -11,19 +11,19 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JsonObjectMapper {
     @Autowired
     private IndexRepository ındexRepository;
 
-    public static Data jsonMapperTc(List<Data> dataList, String responseString){
+    public static Data jsonMapperTc(Data gelenData, String responseString, String plate){
         Integer satirlarSize = 0;
         Data myData = new Data();
         Data data = new Data();
 
-        if(dataList != null){
-            for (Data d : dataList) {
+        if(gelenData != null){
                 data = new Data();
                 try {
                     JSONObject data1 = new JSONObject(responseString);
@@ -47,20 +47,20 @@ public class JsonObjectMapper {
                     if (data2.toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
 
                         data.setDurum_text("N/A");
-                        data.setTckn("tckn");
+                        data.setTckn(data2.get("tckn").toString());
                         data.setUnvan("N/A");
                         data.setVdkodu("N/A");
                         data.setVkn("N/A");
-                        data.setOid(d.getOid());
+                        data.setOid(gelenData.getOid());
                         data.setPlaka("N/A");
                         data.setIsebaslamatarihi("N/A");
                         data.setNacekoduaciklama("N/A");
                         data.setTc_adres_donen("N/A");
 
                     }
-                    data.setOid(d.getOid());
-                    data.setTckn("tckn");
-                    data.setPlaka("plaka");
+                    data.setOid(gelenData.getOid());
+                    data.setTckn(data2.get("tckn").toString());
+                    data.setPlaka((String) data2.get("plate"));
                     data.setVdkodu(data2.get("vdkodu").toString());
                     data.setUnvan(data2.get("unvan").toString());
                     data.setVkn(data2.get("vkn").toString());
@@ -77,7 +77,6 @@ public class JsonObjectMapper {
                     }
                 }catch (Exception e){e.printStackTrace();}
 
-            }
             return data;
         }
 
@@ -102,7 +101,7 @@ public class JsonObjectMapper {
         if (data2.toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("tckn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
 
             myData.setDurum_text("N/A");
-            myData.setTckn("tckn");
+            myData.setTckn(data2.get("tckn").toString());
             myData.setUnvan("N/A");
             myData.setVdkodu("N/A");
             myData.setVkn("N/A");
@@ -112,8 +111,8 @@ public class JsonObjectMapper {
             myData.setTc_adres_donen("N/A");
 
         }
-        myData.setTckn("tckn");
-        myData.setPlaka("plaka");
+        myData.setTckn(data2.get("tckn").toString());
+        myData.setPlaka(plate);
         myData.setVdkodu(data2.get("vdkodu").toString());
         myData.setUnvan(data2.get("unvan").toString());
         myData.setVkn(data2.get("vkn").toString());
@@ -131,13 +130,11 @@ public class JsonObjectMapper {
 
         return myData;
     }
-    public static Data jsonMapperVD(List<Data> dataList, String responseString){
+    public static Data jsonMapperVD(Data data, String responseString, String plate){
         Integer satirlarSize = 0;
         Data myData = new Data();
 
-        if(dataList.size() > 0) {
-            for (Data d : dataList) {
-
+        if(data != null) {
                 try {
                     JSONObject data1 = new JSONObject(responseString);
                     JSONObject data2 = (JSONObject) data1.get("data");
@@ -160,19 +157,19 @@ public class JsonObjectMapper {
                     if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
 
                         myData.setVd_fiili_durum_donen("N/A");
-                        myData.setVd_vkn("vkn");
+                        myData.setVd_vkn(data2.get("vkn").toString());
                         myData.setVd_unvan_donen("N/A");
                         myData.setVd_vdkodu("N/A");
                         myData.setVd_tc_donen("N/A");
-                        myData.setOid(d.getOid());
+                        myData.setOid(data.getOid());
                         myData.setPlaka("N/A");
                         myData.setNacekoduaciklama_vd("N/A");
                         myData.setVd_adres_donen("N/A");
 
                     }
-                    myData.setOid(d.getOid());
-                    myData.setVd_vkn("vkn");
-                    myData.setPlaka("plaka");
+                    myData.setOid(data.getOid());
+                    myData.setVd_vkn(data2.get("vkn").toString());
+                    myData.setPlaka(plate);
                     myData.setVd_vdkodu(data2.get("vdkodu").toString());
                     myData.setVd_unvan_donen(data2.get("unvan").toString());
                     myData.setVd_tc_donen(data2.get("tckn").toString());
@@ -192,7 +189,7 @@ public class JsonObjectMapper {
                 }
             }
 
-        }
+        //}
         else {
             JSONObject data1 = new JSONObject(responseString);
             JSONObject data2 = (JSONObject) data1.get("data");
@@ -215,7 +212,7 @@ public class JsonObjectMapper {
             if (data2.toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vkn").toString().length() == 0 || data2.get("vdkodu") == null || data2.get("vdkodu").toString().length() == 0) {
 
                 myData.setVd_fiili_durum_donen("N/A");
-                myData.setVd_vkn("vkn");
+                myData.setVd_vkn(data2.get("vkn").toString());
                 myData.setVd_unvan_donen("N/A");
                 myData.setVd_vdkodu("N/A");
                 myData.setVd_tc_donen("N/A");
@@ -224,8 +221,8 @@ public class JsonObjectMapper {
                 myData.setVd_adres_donen("N/A");
 
             }
-            myData.setVd_vkn("vkn");
-            myData.setPlaka("plaka");
+            myData.setVd_vkn(data2.get("vkn").toString());
+            myData.setPlaka(plate);
             myData.setVd_vdkodu(data2.get("vdkodu").toString());
             myData.setVd_unvan_donen(data2.get("unvan").toString());
             myData.setVd_tc_donen(data2.get("tckn").toString());

@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -106,24 +107,20 @@ public class DataController {
                                 @RequestParam("plate") String plate){
 
         Data data = new Data();
-        List<Data> datas = new ArrayList<>();
-
         if(type.equals("tc")) {
 
-            List<Data> dataList = indexRepository.findByGovNumberAndPlate(text, plate);
+            data = dataDaoImpl.selectDataByGovernmentNumber(text, plate);
 
             //eğer vd_tc_index tablosunda var olan bir kayıt ise bilgileri update edilir.
-            dataRepositoryImp.updateWithGovernmentFromRita(dataList, jsonResponseString);
+            dataRepositoryImp.updateWithGovernmentFromRita(data, jsonResponseString, plate);
 
 
         }else if(type.equals("vkn")){
-            //data = indexRepository.findByTaxNumberAndPlate(text, plate);
-            datas = dataDaoImpl.selectAllDatas(text, plate);
 
-            for(Data data1 : datas){
-                data1.setPlaka(plate);
-                dataRepositoryImp.updateWithTaxNumberFromRita(datas, jsonResponseString);
-            }
+            data = dataDaoImpl.selectDataByTaxNumber(text, plate);
+
+            dataRepositoryImp.updateWithTaxNumberFromRita(data, jsonResponseString, plate);
+
         }
     }
 

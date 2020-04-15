@@ -1,4 +1,5 @@
 package com.tax.verify.api;
+import com.sun.xml.internal.ws.client.sei.ResponseBuilder;
 import com.tax.verify.model.Data;
 import com.tax.verify.dao.*;
 import com.tax.verify.model.Queue;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.xml.ws.Response;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +33,7 @@ public class DataController {
 
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
-    @Autowired
-    private IndexRepository indexRepository;
+
     @Autowired
     private RepeatedSqlRepo repo;
 
@@ -103,8 +104,8 @@ public class DataController {
     @PostMapping("/sendToVerify")
     @ResponseBody
     public void createSqlString(@RequestParam("jsonResponseString") String jsonResponseString,
-                                @RequestParam("text") String text, @RequestParam("type") String type,
-                                @RequestParam("plate") String plate){
+                                    @RequestParam("text") String text, @RequestParam("type") String type,
+                                    @RequestParam("plate") String plate){
 
         Data data = new Data();
         if(type.equals("tc")) {
@@ -117,6 +118,7 @@ public class DataController {
 
         }else if(type.equals("vkn")){
 
+            //data = dataDaoImpl.selectDataByTaxNumber(text, plate);
             data = dataDaoImpl.selectDataByTaxNumber(text, plate);
 
             dataRepositoryImp.updateWithTaxNumberFromRita(data, jsonResponseString, plate);

@@ -10,6 +10,7 @@ import kong.unirest.Unirest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -19,7 +20,13 @@ import static com.tax.verify.mailSender.EmailSender.gmail_config;
 
 @Service
 public class GetHttpResponse {
+    private JsonObjectMapper jsonObjectMapper;
     private static EmailSender mailer;
+
+    @Autowired
+    public GetHttpResponse(JsonObjectMapper jsonObjectMapper){
+        this.jsonObjectMapper = jsonObjectMapper;
+    }
 
     static {
         try {
@@ -313,7 +320,7 @@ public class GetHttpResponse {
                     String responseString = "";
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = JsonObjectMapper.httpGetVd(taxNumber.trim(), newList.get(i).getPlaka());
+                    HttpResponse jsonResponse = jsonObjectMapper.httpGet("vkn=",taxNumber.trim(), newList.get(i).getPlaka());
                     responseString = jsonResponse.getBody().toString();
 
                     JSONObject data1 = new JSONObject(responseString);
@@ -398,7 +405,7 @@ public class GetHttpResponse {
 
                     AtomicReference<Boolean> isFound = new AtomicReference<>(false);
 
-                    HttpResponse jsonResponse = JsonObjectMapper.httpGet(governmentNum.trim(), newList.get(i).getPlaka());
+                    HttpResponse jsonResponse = jsonObjectMapper.httpGet("tc=",governmentNum.trim(), newList.get(i).getPlaka());
 
                     String responseString = jsonResponse.getBody().toString();
 

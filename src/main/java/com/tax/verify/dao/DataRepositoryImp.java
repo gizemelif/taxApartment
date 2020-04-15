@@ -19,17 +19,18 @@ import java.util.*;
 @Service
 public class DataRepositoryImp {
     private final DataDaoImpl dataDaoImpl;
+    private final GetHttpResponse getHttpResponse;
+    private final JsonObjectMapper jsonObjectMapper;
 
     @Autowired
-    public DataRepositoryImp(DataDaoImpl dataDaoImpl){
+    public DataRepositoryImp(DataDaoImpl dataDaoImpl, GetHttpResponse getHttpResponse, JsonObjectMapper jsonObjectMapper){
         this.dataDaoImpl = dataDaoImpl;
+        this.getHttpResponse = getHttpResponse;
+        this.jsonObjectMapper = jsonObjectMapper;
     }
 
     @PersistenceContext
     EntityManager em;
-
-    @Autowired
-    private IndexRepository ındexRepository;
 
     @Autowired
     private QueueRepo queueRepo;
@@ -49,9 +50,6 @@ public class DataRepositoryImp {
     @Autowired
     Queue queue;
 
-    @Autowired
-    private JsonObjectMapper jsonObjectMapper;
-
    public List<Data> getSqlQuery(String sql) {
         Session session = em.unwrap(Session.class);
         SQLQuery s = session.createSQLQuery(sql);
@@ -63,7 +61,6 @@ public class DataRepositoryImp {
         try{
 
             List<Data> newList = getSqlQuery(sql);
-            GetHttpResponse getHttpResponse = new GetHttpResponse();
 
             newList.parallelStream().forEach( d ->{
                 try {
@@ -78,11 +75,12 @@ public class DataRepositoryImp {
                                 respData = getHttpResponse.getResponseVkn(list_for_parallel).get(i);
                             }
                         }
-                        ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
+                        /*ındexRepository.updateVkn(respData.getVd_vkn(),respData.getVd_unvan_donen(),
                                 respData.getVd_vdkodu(), respData.getVd_tc_donen(), respData.getVd_fiili_durum_donen(),
                                 respData.getPlaka(),respData.getOid(), respData.getVd_tum_il_na(), respData.getVd_adres_donen(),
                                 respData.getNacekoduaciklama_vd(), respData.getIsebaslamatarihi_vd(), respData.getMatrah_vd(),
-                                respData.getTahakkukeden_vd(), respData.getYil_vd());
+                                respData.getTahakkukeden_vd(), respData.getYil_vd());*/
+                        dataDaoImpl.updateDataByForTaxNumber(respData);
                     }
                     catch (Exception e)
                     {
@@ -104,7 +102,6 @@ public class DataRepositoryImp {
         try{
 
             List<Data> newList = getSqlQuery(sql);
-            GetHttpResponse getHttpResponse = new GetHttpResponse();
 
             newList.parallelStream().forEach( d ->{
                 try {
@@ -120,11 +117,12 @@ public class DataRepositoryImp {
                                 respData = getHttpResponse.getResponse(list_for_parallel).get(i);
                             }
                         }
-                        ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
+                        /*ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
                                 respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
                                 respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
                                 respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
-                                respData.getYil());
+                                respData.getYil());*/
+                        dataDaoImpl.updateDataByForGovernmentNumber(respData);
                     }
                     catch (Exception e)
                     {
@@ -154,11 +152,12 @@ public class DataRepositoryImp {
                try{
                    Data respData = new Data();
                    respData = JsonObjectMapper.jsonMapperTc(data, responseString, plate);
-                   ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
+                   /*ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
                            respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
                            respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
                            respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
-                           respData.getYil());
+                           respData.getYil());*/
+                   dataDaoImpl.updateDataByForGovernmentNumber(respData);
                }catch (Exception e){
                    e.printStackTrace();
                }
@@ -178,11 +177,8 @@ public class DataRepositoryImp {
                try {
                    Data respData = new Data();
                    respData = JsonObjectMapper.jsonMapperVD(data, responseString, plate);
-                   ındexRepository.updateVkn(respData.getVd_vkn(), respData.getVd_unvan_donen(),
-                           respData.getVd_vdkodu(), respData.getVd_tc_donen(), respData.getVd_fiili_durum_donen(),
-                           respData.getPlaka(), respData.getOid(), respData.getVd_tum_il_na(), respData.getVd_adres_donen(),
-                           respData.getNacekoduaciklama_vd(), respData.getIsebaslamatarihi_vd(), respData.getMatrah_vd(),
-                           respData.getTahakkukeden_vd(), respData.getYil_vd());
+
+                   dataDaoImpl.updateDataByForTaxNumber(respData);
                } catch (Exception e) {
                    e.printStackTrace();
                }

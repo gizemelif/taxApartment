@@ -268,6 +268,15 @@ public class Data {
     public Data() {
     }
 
+    public Data(String oid){
+        this.oid = oid;
+    }
+
+    public Data(String oid, String plaka){
+        this.oid = oid;
+        this.plaka = plaka;
+    }
+
     public Data(String vd_vkn, String vd_unvan_sorulan, String vd_unvan_donen, String adres_sorulan, String ilce_sorulan, String cityName, String vd_adres_donen, String vd_vdkodu, String vd_vergi_dairesi_ilce, String vd_tc_donen, String vd_fiili_durum_donen, String tutarlilik, String tckn, String unvan, String tc_adres_donen, String vdkodu, String tc_vergi_dairesi_ilce, String vkn, String durum_text, String point_status_name, Date tarih, String oid, String plaka, String durum, String sorgulayantckimlik) {
         this.vd_vkn = vd_vkn;
         this.vd_unvan_sorulan = vd_unvan_sorulan;

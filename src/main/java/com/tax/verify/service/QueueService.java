@@ -1,7 +1,6 @@
 package com.tax.verify.service;
 
 import com.tax.verify.dao.DataRepositoryImp;
-import com.tax.verify.dao.IndexRepository;
 import com.tax.verify.dao.QueueRepo;
 import com.tax.verify.dao.RepeatedSqlRepo;
 import com.tax.verify.model.Queue;
@@ -21,9 +20,6 @@ import static com.tax.verify.model.Queue.QueueState.WAITING;
 public class QueueService {
     @Autowired
     private DataRepositoryImp dataRepositoryImp;
-
-    @Autowired
-    private IndexRepository dataRepository;
 
     @Autowired
     private QueueRepo queueRepo;
@@ -53,7 +49,6 @@ public class QueueService {
         queried.setCreated_at( new Date());
         queried.setQuery_type(queryType);
         repeatedSqlRepo.save(queried);
-        //repeatedSqlRepo.saveAndFlush(queried);
     }
     public void addRepoQueriedSqlTc(){
         Vd_Tc_Queried queried = new Vd_Tc_Queried();
@@ -65,7 +60,6 @@ public class QueueService {
         queried.setCreated_at( new Date());
         queried.setQuery_type(queryType);
         repeatedSqlRepo.save(queried);
-        //repeatedSqlRepo.saveAndFlush(queried);
     }
 
     public void addRepoQueriedSqlVdTc(String sqlString, String queryType){
@@ -77,7 +71,6 @@ public class QueueService {
         queried.setCreated_at( new Date());
         queried.setQuery_type(queryType);
         repeatedSqlRepo.save(queried);
-        //repeatedSqlRepo.saveAndFlush(queried);
     }
 
 }

@@ -117,11 +117,6 @@ public class DataRepositoryImp {
                                 respData = getHttpResponse.getResponse(list_for_parallel).get(i);
                             }
                         }
-                        /*ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
-                                respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
-                                respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
-                                respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
-                                respData.getYil());*/
                         dataDaoImpl.updateDataByForGovernmentNumber(respData);
                     }
                     catch (Exception e)
@@ -145,48 +140,70 @@ public class DataRepositoryImp {
         queues.stream().forEach(q -> System.out.println(q.getSql_string()));
     }
 
-    public void updateWithGovernmentFromRita(Data data, String responseString, String plate){
-      Data tempData = new Data();
-       try{
-           if(data != null){
-               try{
-                   Data respData = new Data();
-                   respData = JsonObjectMapper.jsonMapperTc(data, responseString, plate);
-                   /*ındexRepository.update(respData.getTckn(),respData.getUnvan(),respData.getVdkodu(),
-                           respData.getVkn(),respData.getDurum_text(), respData.getPlaka(),respData.getOid(),
-                           respData.getTc_tum_il_na(), respData.getTc_adres_donen(), respData.getNacekoduaciklama(),
-                           respData.getIsebaslamatarihi(), respData.getMatrah(),respData.getTahakkukeden(),
-                           respData.getYil());*/
-                   dataDaoImpl.updateDataByForGovernmentNumber(respData);
-               }catch (Exception e){
-                   e.printStackTrace();
-               }
-           }else {
-               tempData = JsonObjectMapper.jsonMapperTc(data, responseString, plate);
+    public void updateWithGovernmentFromRita(List<Data> datas, String responseString, String plate){
 
-               dataDaoImpl.insertNewDataByGovernmentNumber(tempData);
+       try{
+           if(datas != null){
+               List<Data> newDatas = datas;
+               newDatas.parallelStream().forEach(d -> {
+                   try{
+                       List<Data> list_for_parallel = new ArrayList<>();
+                       list_for_parallel.add(d);
+                       Data respData = new Data();
+
+                       for(int i = 0; i < list_for_parallel.size(); i++){
+
+                           respData = JsonObjectMapper.jsonMapperTc(list_for_parallel.get(i), responseString, plate);
+
+                           dataDaoImpl.updateDataByForGovernmentNumber(respData);
+                       }
+                   }catch (Exception e){
+                       e.printStackTrace();
+                   }
+               });
+
+           }else {
+               for(Data data : datas){
+                   Data tempData = new Data();
+
+                   tempData = JsonObjectMapper.jsonMapperTc(data, responseString, plate);
+
+                   dataDaoImpl.insertNewDataByGovernmentNumber(tempData);
+               }
            }
 
        }catch (Exception e){e.printStackTrace();}
 
     }
-    public void updateWithTaxNumberFromRita(Data data, String responseString, String plate) {
+    public void updateWithTaxNumberFromRita(List<Data> datas, String responseString, String plate) {
 
        try {
-           if (data != null) {
-               try {
-                   Data respData = new Data();
-                   respData = JsonObjectMapper.jsonMapperVD(data, responseString, plate);
+           if (datas != null) {
+               List<Data> newDatas = datas;
+               newDatas.parallelStream().forEach(d -> {
+                   try{
+                       List<Data> list_for_parallel = new ArrayList<>();
+                       list_for_parallel.add(d);
+                       Data respData = new Data();
 
-                   dataDaoImpl.updateDataByForTaxNumber(respData);
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
+                       for(int i = 0; i < list_for_parallel.size(); i++){
+
+                           respData = JsonObjectMapper.jsonMapperVD(list_for_parallel.get(i), responseString, plate);
+
+                           dataDaoImpl.updateDataByForTaxNumber(respData);
+                       }
+                   }catch (Exception e){
+                       e.printStackTrace();
+                   }
+               });
            } else {
-               Data tempData = new Data();
-               tempData = JsonObjectMapper.jsonMapperVD(data, responseString, plate);
 
-               dataDaoImpl.insertNewData(tempData);
+               for(Data data : datas) {
+                   Data tempData = new Data();
+                   tempData = JsonObjectMapper.jsonMapperVD(data, responseString, plate);
+
+                   dataDaoImpl.insertNewData(tempData);
+               }
            }
        }catch (Exception e){
            e.printStackTrace();

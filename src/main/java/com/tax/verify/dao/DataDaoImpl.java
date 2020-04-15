@@ -94,17 +94,17 @@ public class DataDaoImpl implements DataDao {
     }
 
     @Override
-    public Data selectDataByTaxNumber(String taxNumber, String plaka) {
-        final String sql = "SELECT * FROM vd_tc_index WHERE vd_sorulan = ? AND plaka = ?";
+    public List<Data> selectDataByTaxNumber(String taxNumber, String plaka) {
+        //final String sql = "SELECT * FROM vd_tc_index WHERE vd_sorulan = ? AND plaka = ?";
+        final String sql = "SELECT * FROM vd_tc_index WHERE vd_sorulan = ? AND (plaka = ? or plaka is null)";
         try{
-            Data data = jdbcTemplate.queryForObject(
+            return jdbcTemplate.query(
                     sql,
                     new Object[]{taxNumber, plaka}
                     , (resultSet, i) ->{
                         String oid = resultSet.getString("oid");
                         return new Data(oid);
                     });
-            return data;
         }catch (EmptyResultDataAccessException e){
             e.printStackTrace();
             return null;
@@ -112,10 +112,11 @@ public class DataDaoImpl implements DataDao {
     }
 
     @Override
-    public Data selectDataByGovernmentNumber(String governmentNumber, String plaka) {
-        final String sql = "SELECT * FROM vd_tc_index WHERE tc_sorulan = ? AND plaka = ?";
+    public List<Data> selectDataByGovernmentNumber(String governmentNumber, String plaka) {
+        //final String sql = "SELECT * FROM vd_tc_index WHERE tc_sorulan = ? AND plaka = ?";
+        final String sql = "SELECT * FROM vd_tc_index WHERE tc_sorulan = ? AND (plaka = ? or plaka is null)";
         try{
-            Data data = jdbcTemplate.queryForObject(
+            return jdbcTemplate.query(
                     sql,
                     new Object[]{governmentNumber, plaka}
                     , (resultSet, i) -> {
@@ -123,7 +124,6 @@ public class DataDaoImpl implements DataDao {
                         String plate = resultSet.getString("plaka");
                         return new Data(oid, plate);
                     });
-            return data;
         }catch (EmptyResultDataAccessException e){
             e.printStackTrace();
             return null;

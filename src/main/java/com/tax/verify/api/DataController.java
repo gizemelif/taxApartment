@@ -107,7 +107,7 @@ public class DataController {
                                     @RequestParam("text") String text, @RequestParam("type") String type,
                                     @RequestParam("plate") String plate){
 
-        Data data = new Data();
+        List<Data> data = new ArrayList<>();
         if(type.equals("tc")) {
 
             data = dataDaoImpl.selectDataByGovernmentNumber(text, plate);
@@ -118,7 +118,6 @@ public class DataController {
 
         }else if(type.equals("vkn")){
 
-            //data = dataDaoImpl.selectDataByTaxNumber(text, plate);
             data = dataDaoImpl.selectDataByTaxNumber(text, plate);
 
             dataRepositoryImp.updateWithTaxNumberFromRita(data, jsonResponseString, plate);

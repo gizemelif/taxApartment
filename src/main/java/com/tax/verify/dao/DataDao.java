@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DataDao {
-    int insertNewData(Data data);
-    int insertNewDataByGovernmentNumber(Data data);
+    boolean insertNewData(Data data);
+    boolean insertNewDataByGovernmentNumber(Data data);
     List<Data> selectDataByTaxNumber(String taxNumber, String plaka);
     List<Data> selectDataByGovernmentNumber(String governmentNumber, String plaka);
     List<Data> selectAllDatas();
-    int updateDataByForTaxNumber(Data newData);
-    int updateDataByForGovernmentNumber(Data newData);
+    boolean updateDataByForTaxNumber(Data newData);
+    boolean updateDataByForGovernmentNumber(Data newData);
     int deleteDataById(String oid);
     Optional<Data> selectDataById(String oid);
 }

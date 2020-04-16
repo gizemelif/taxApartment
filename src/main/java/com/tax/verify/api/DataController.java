@@ -6,6 +6,8 @@ import com.tax.verify.service.QueueService;
 import com.tax.verify.thirdparty.excel.ExcelPOIHelper;
 import com.tax.verify.thirdparty.excel.ReadExcel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,14 +26,13 @@ import java.util.Optional;
 public class DataController {
 
     private final DataDaoImpl dataDaoImpl;
+    private final DataRepositoryImp dataRepositoryImp;
 
     @Autowired
-    public DataController(DataDaoImpl dataDaoImpl){
+    public DataController(DataDaoImpl dataDaoImpl, DataRepositoryImp dataRepositoryImp){
         this.dataDaoImpl = dataDaoImpl;
+        this.dataRepositoryImp = dataRepositoryImp;
     }
-
-    @Autowired
-    private DataRepositoryImp dataRepositoryImp;
 
     @Autowired
     private RepeatedSqlRepo repo;
@@ -102,26 +103,32 @@ public class DataController {
 
     @PostMapping("/sendToVerify")
     @ResponseBody
-    public void createSqlString(@RequestParam("jsonResponseString") String jsonResponseString,
-                                    @RequestParam("text") String text, @RequestParam("type") String type,
-                                    @RequestParam("plate") String plate){
+    public ResponseEntity<String> createSqlString(@RequestParam("jsonResponseString") String jsonResponseString,
+                                          @RequestParam("text") String text, @RequestParam("type") String type,
+                                          @RequestParam("plate") String plate){
 
-        List<Data> data = new ArrayList<>();
-        if(type.equals("tc")) {
+            List<Data> data = new ArrayList<>();
+            boolean isCompleted = false;
 
-            data = dataDaoImpl.selectDataByGovernmentNumber(text, plate);
+            if(type.equals("tc")) {
 
-            //eğer vd_tc_index tablosunda var olan bir kayıt ise bilgileri update edilir.
-            dataRepositoryImp.updateWithGovernmentFromRita(data, jsonResponseString, plate);
+                data = dataDaoImpl.selectDataByGovernmentNumber(text, plate);
+
+                //eğer vd_tc_index tablosunda var olan bir kayıt ise bilgileri update edilir.
+                isCompleted = dataRepositoryImp.updateWithGovernmentFromRita(data, jsonResponseString, plate);
 
 
-        }else if(type.equals("vkn")){
+            }else if(type.equals("vkn")){
 
-            data = dataDaoImpl.selectDataByTaxNumber(text, plate);
+                data = dataDaoImpl.selectDataByTaxNumber(text, plate);
 
-            dataRepositoryImp.updateWithTaxNumberFromRita(data, jsonResponseString, plate);
+                isCompleted = dataRepositoryImp.updateWithTaxNumberFromRita(data, jsonResponseString, plate);
 
-        }
+            }
+            if(isCompleted == true)
+                return ResponseEntity.status(HttpStatus.OK).body(jsonResponseString);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed");
     }
 
 

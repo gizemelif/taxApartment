@@ -140,10 +140,11 @@ public class DataRepositoryImp {
         queues.stream().forEach(q -> System.out.println(q.getSql_string()));
     }
 
-    public void updateWithGovernmentFromRita(List<Data> datas, String responseString, String plate){
+    public boolean updateWithGovernmentFromRita(List<Data> datas, String responseString, String plate){
 
+       boolean isCompleted = false;
        try{
-           if(datas != null){
+           if(datas.size() != 0){
                List<Data> newDatas = datas;
                newDatas.parallelStream().forEach(d -> {
                    try{
@@ -162,23 +163,27 @@ public class DataRepositoryImp {
                    }
                });
 
-           }else {
-               for(Data data : datas){
-                   Data tempData = new Data();
-
-                   tempData = JsonObjectMapper.jsonMapperTc(data, responseString, plate);
-
-                   dataDaoImpl.insertNewDataByGovernmentNumber(tempData);
-               }
+               return true;
            }
+               Data nullData = new Data();
+
+               Data tempData = new Data();
+
+               tempData = JsonObjectMapper.jsonMapperTc(nullData, responseString, plate);
+
+               isCompleted = dataDaoImpl.insertNewDataByGovernmentNumber(tempData);
+
+               if(isCompleted == true) return true;
+
 
        }catch (Exception e){e.printStackTrace();}
-
+        return false;
     }
-    public void updateWithTaxNumberFromRita(List<Data> datas, String responseString, String plate) {
+    public boolean updateWithTaxNumberFromRita(List<Data> datas, String responseString, String plate) {
 
+       boolean isCompleted = false;
        try {
-           if (datas != null) {
+           if (datas.size() != 0) {
                List<Data> newDatas = datas;
                newDatas.parallelStream().forEach(d -> {
                    try{
@@ -196,19 +201,23 @@ public class DataRepositoryImp {
                        e.printStackTrace();
                    }
                });
-           } else {
 
-               for(Data data : datas) {
-                   Data tempData = new Data();
-                   tempData = JsonObjectMapper.jsonMapperVD(data, responseString, plate);
-
-                   dataDaoImpl.insertNewData(tempData);
-               }
+               return true;
            }
+
+           Data nullData = new Data();
+           Data tempData = new Data();
+           tempData = JsonObjectMapper.jsonMapperVD(nullData, responseString, plate);
+
+           isCompleted = dataDaoImpl.insertNewData(tempData);
+
+           if(isCompleted == true) return true;
+
        }catch (Exception e){
            e.printStackTrace();
-       }
 
+       }
+        return false;
     }
 
 }
